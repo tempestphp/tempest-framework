@@ -283,6 +283,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $session = $this->manager->getOrCreate($id);
         $session->set('user', 'brent');
+
         $this->manager->save($session);
 
         $unchanged = $this->manager->getOrCreate($id);
@@ -290,6 +291,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         // Another request writes to the same session in the meantime
         $concurrent = $this->manager->getOrCreate($id);
         $concurrent->set('cart', 'book');
+
         $this->manager->save($concurrent);
 
         $clock->plus(Duration::minutes(5));
@@ -309,6 +311,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $session = $this->manager->getOrCreate($id);
         $session->set('user', 'brent');
+
         $this->manager->save($session);
 
         $clock->plus(Duration::minutes(5));

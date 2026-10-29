@@ -171,7 +171,7 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
         $middleware(
             request: new GenericRequest(method: Method::GET, uri: '/', headers: $headers),
             next: new HttpMiddlewareCallable(function () use ($session, $controller) {
-                if ($controller !== null) {
+                if ($controller instanceof Closure) {
                     $controller($session);
                 }
 
