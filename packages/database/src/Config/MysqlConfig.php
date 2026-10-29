@@ -7,6 +7,7 @@ namespace Tempest\Database\Config;
 use PDO;
 use Pdo\Mysql;
 use SensitiveParameter;
+use Tempest\Database\Exceptions\DatabaseConnectionStringWasInvalid;
 use Tempest\Database\Migrations\DatePrefixStrategy;
 use Tempest\Database\Migrations\MigrationNamingStrategy;
 use Tempest\Database\Tables\NamingStrategy;
@@ -17,10 +18,15 @@ final class MysqlConfig implements DatabaseConfig
 {
     public string $dsn {
         get => sprintf(
-            'mysql:host=%s:%s;dbname=%s',
+            'mysql:host=%s:%s;dbname=%s%s',
             $this->host,
             $this->port,
             $this->database,
+            implode('', array_map(
+                fn (string $key, string $value) => ";{$key}={$value}",
+                array_keys($this->parameters),
+                $this->parameters,
+            )),
         );
     }
 
@@ -78,6 +84,7 @@ final class MysqlConfig implements DatabaseConfig
      * @param NamingStrategy $namingStrategy The naming strategy for database tables and columns.
      * @param MigrationNamingStrategy $migrationNaming The naming strategy for migration file prefixes.
      * @param string|UnitEnum|null $tag An optional tag to identify this database configuration.
+     * @param array<string,string> $parameters Additional parameters appended to the DSN, such as `unix_socket` or `charset`.
      */
     public function __construct(
         #[SensitiveParameter]
@@ -98,5 +105,47 @@ final class MysqlConfig implements DatabaseConfig
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
         public string|UnitEnum|null $tag = null,
+        public array $parameters = [],
     ) {}
+
+    /**
+     * Creates a MySQL configuration from a connection string, such as `mysql://user:password@host:3306/database?charset=utf8mb4`. Components missing from the connection string fall back to their defaults, and query parameters are appended to the DSN. A Unix socket may be given as a percent-encoded host or as the `unix_socket` query parameter.
+     *
+     * @param string $connectionString The connection string. Supported schemes are `mysql` and `mariadb`.
+     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the connection string.
+     */
+    public static function fromConnectionString(#[SensitiveParameter] string $connectionString, mixed ...$options): self
+    {
+        $parsed = DatabaseConnectionString::from($connectionString);
+
+        if (! in_array($parsed->scheme, ['mysql', 'mariadb'], strict: true)) {
+            throw DatabaseConnectionStringWasInvalid::schemeWasNotSupported($parsed->scheme, ['mysql', 'mariadb']);
+        }
+
+        $host = $parsed->host;
+        $parameters = $parsed->parameters;
+
+        if ($host !== null && str_starts_with($host, '/')) {
+            $parameters['unix_socket'] ??= $host;
+            $host = null;
+        }
+
+        if ($host === null && ! isset($parameters['unix_socket'])) {
+            throw DatabaseConnectionStringWasInvalid::hostWasMissing();
+        }
+
+        $arguments = array_filter(
+            [
+                'host' => $host,
+                'port' => $parsed->port !== null ? (string) $parsed->port : null,
+                'username' => $parsed->username,
+                'password' => $parsed->password,
+                'database' => $parsed->database,
+                'parameters' => $parameters,
+            ],
+            fn (mixed $value) => $value !== null,
+        );
+
+        return new self(...[...$arguments, ...$options]);
+    }
 }
