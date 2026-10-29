@@ -10,9 +10,14 @@ use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\str;
 
+/**
+ * @template TModel
+ */
 trait HasWhereQueryBuilderMethods
 {
     use HasConvenientWhereMethods;
+
+    /** @use HasWhereRelationMethods<TModel> */
     use HasWhereRelationMethods;
 
     /**
