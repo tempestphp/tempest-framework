@@ -164,6 +164,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_KEY, 1);
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
         $session->set('key', 'value');
+
         $sessionManager = new TestingSessionManager();
 
         $authenticator = new SessionAuthenticator(

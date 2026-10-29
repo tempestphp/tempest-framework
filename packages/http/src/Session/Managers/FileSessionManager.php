@@ -104,8 +104,11 @@ final readonly class FileSessionManager implements SessionManager
 
         foreach ($sessionFiles as $sessionFile) {
             $lastActiveAt = @filemtime($sessionFile);
+            if ($lastActiveAt === false) {
+                continue;
+            }
 
-            if ($lastActiveAt === false || $lastActiveAt > $expiredBefore) {
+            if ($lastActiveAt > $expiredBefore) {
                 continue;
             }
 
