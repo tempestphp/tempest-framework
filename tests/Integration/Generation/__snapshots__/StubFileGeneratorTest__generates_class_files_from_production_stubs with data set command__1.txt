@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Generated;
+
+use Tempest\Console\Console;
+use Tempest\Console\ConsoleCommand;
+
+final class GeneratedClass
+{
+    public function __construct(
+        private Console $console,
+    ) {}
+
+    #[ConsoleCommand(name: 'generated-class')]
+    public function __invoke(): void
+    {
+        $this->console->success('Done!');
+    }
+}

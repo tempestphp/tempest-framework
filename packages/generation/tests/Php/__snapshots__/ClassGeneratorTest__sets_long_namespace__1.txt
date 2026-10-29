@@ -2,6 +2,4 @@
 
 namespace App\Foo\Bar\Baz\Qux;
 
-class MyClass
-{
-}
+class MyClass {}

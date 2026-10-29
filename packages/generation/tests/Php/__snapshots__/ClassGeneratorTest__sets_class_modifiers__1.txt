@@ -5,6 +5,4 @@ namespace App;
 /**
  * This creates a users table.
  */
-final readonly class CreateUsersTable
-{
-}
+final readonly class CreateUsersTable {}

@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Generated;
+
+use Attribute;
+use Tempest\Auth\Installer\MustBeAuthenticatedMiddleware;
+use Tempest\Router\Route;
+use Tempest\Router\RouteDecorator;
+
+#[Attribute]
+final readonly class GeneratedClass implements RouteDecorator
+{
+    public function decorate(Route $route): Route
+    {
+        $route->middleware[] = MustBeAuthenticatedMiddleware::class;
+
+        return $route;
+    }
+}
