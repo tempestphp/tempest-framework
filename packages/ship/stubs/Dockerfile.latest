@@ -1,0 +1,106 @@
+ARG FRANKENPHP_VERSION=1.11.3
+ARG PHP_VERSION=8.5.3
+ARG PHP_EXTRA_EXTENSIONS=" "
+
+FROM debian:trixie-slim AS builder
+ARG FRANKENPHP_VERSION
+ARG PHP_VERSION
+ARG PHP_EXTRA_EXTENSIONS
+
+RUN set -eux; \
+    CHROOT=/chroot; \
+    \
+    { \
+        echo 'Package: php*'; \
+        echo "Pin: version ${PHP_VERSION}*"; \
+        echo 'Pin-Priority: 1001'; \
+        echo ''; \
+        echo 'Package: frankenphp'; \
+        echo "Pin: version ${FRANKENPHP_VERSION}+php85*"; \
+        echo 'Pin-Priority: 1001'; \
+        echo ''; \
+        echo 'Package: php*'; \
+        echo 'Pin: release o=Debian'; \
+        echo 'Pin-Priority: -1'; \
+    } > /etc/apt/preferences.d/static-php85; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends busybox ca-certificates curl mailcap xz-utils; \
+    curl https://pkg.henderkes.com/api/packages/85/debian/repository.key -o /etc/apt/keyrings/static-php85.asc; \
+    echo "deb [signed-by=/etc/apt/keyrings/static-php85.asc] https://pkg.henderkes.com/api/packages/85/debian php-zts main" > /etc/apt/sources.list.d/static-php85.list; \
+    apt-get update; \
+    apt-get install -y --download-only --no-install-recommends \
+        ca-certificates \
+        frankenphp \
+        php-zts-gd \
+        php-zts-intl \
+        php-zts-mysqli \
+        php-zts-pdo-mysql \
+        php-zts-pdo-pgsql \
+        php-zts-pdo-sqlite \
+        php-zts-redis \
+        php-zts-zip ${PHP_EXTRA_EXTENSIONS}; \
+    mkdir -p $CHROOT; \
+    for deb in /var/cache/apt/archives/*.deb; do \
+        dpkg-deb --extract "$deb" $CHROOT; \
+    done; \
+    cp /etc/mime.types $CHROOT/etc/mime.types; \
+    \
+    # Download static curl into the chroot
+    case "$(dpkg --print-architecture)" in \
+        amd64)   CURL_ARCH="x86_64" ;; \
+        arm64)   CURL_ARCH="aarch64" ;; \
+        armhf)   CURL_ARCH="armv7" ;; \
+        armel)   CURL_ARCH="armv5" ;; \
+        i386)    CURL_ARCH="i686" ;; \
+        *)       echo "Unsupported arch: $(dpkg --print-architecture)" && exit 1 ;; \
+    esac; \
+    CURL_VERSION=$(curl -fsSL "https://api.github.com/repos/stunnel/static-curl/releases/latest" \
+        | grep '"tag_name"' | head -1 \
+        | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/'); \
+    curl -fsSL -o /tmp/curl.tar.xz \
+        "https://github.com/stunnel/static-curl/releases/download/${CURL_VERSION}/curl-linux-${CURL_ARCH}-glibc-${CURL_VERSION}.tar.xz"; \
+    tar -xf /tmp/curl.tar.xz -C $CHROOT/usr/bin curl; \
+    chmod +x $CHROOT/usr/bin/curl; \
+    tar -C $CHROOT -cf /tmp/chroot.tar .;
+
+FROM gcr.io/distroless/cc-debian13:nonroot AS runner
+
+USER root
+
+RUN --mount=type=bind,from=builder,source=/tmp/chroot.tar,target=/tmp/chroot.tar \
+    --mount=type=bind,from=builder,source=/bin/busybox,target=/bin/busybox \
+    ["/bin/busybox", "sh", "-c", "\
+    /bin/busybox tar -xf /tmp/chroot.tar -C /; \
+    /bin/busybox mkdir -p \
+        /app/public \
+        /data/caddy \
+        /config/caddy \
+        /etc/frankenphp; \
+    /bin/busybox chown -R nonroot /app/public /data /config /etc/frankenphp;"]
+
+COPY --chown=nonroot Caddyfile /etc/frankenphp/Caddyfile
+
+# See https://caddyserver.com/docs/conventions#file-locations for details
+ENV XDG_CONFIG_HOME=/config
+ENV XDG_DATA_HOME=/data
+
+# Required from frankenphp
+ENV GODEBUG=cgocheck=0
+
+LABEL org.opencontainers.image.title=TempestPHP
+LABEL org.opencontainers.image.description="The framework that gets out of your way"
+LABEL org.opencontainers.image.url=https://tempestphp.com
+LABEL org.opencontainers.image.source=https://github.com/tempestphp/tempest-framework/
+LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.vendor="Brent Roose and contributors"
+
+WORKDIR /app
+
+EXPOSE 8000
+EXPOSE 8443
+EXPOSE 8443/udp
+
+USER nonroot
+
+CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile", "--adapter", "caddyfile"]
+HEALTHCHECK CMD curl -f http://localhost:2019/metrics || exit 1

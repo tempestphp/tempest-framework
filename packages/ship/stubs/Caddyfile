@@ -1,0 +1,55 @@
+# The Caddyfile is an easy way to configure FrankenPHP and the Caddy web server.
+# This Caddyfile is provided by the TempestPHP Framework with some added options for convenience.
+#
+# https://github.com/tempestphp/tempest-framework
+# https://frankenphp.dev/docs/config
+# https://caddyserver.com/docs/caddyfile
+
+{
+	skip_install_trust
+    http_port {$CADDY_HTTP_PORT:8000}
+    https_port {$CADDY_HTTPS_PORT:8443}
+
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+{$CADDY_SERVER_NAME:localhost} {
+	#log {
+	#	# Redact the authorization query parameter that can be set by Mercure
+	#	format filter {
+	#		request>uri query {
+	#			replace authorization REDACTED
+	#		}
+	#	}
+	#}
+
+	root {$CADDY_SERVER_ROOT:public/}
+	encode zstd br gzip
+
+	# Uncomment the following lines to enable Mercure and Vulcain modules
+	#mercure {
+	#	# Publisher JWT key
+	#	publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+	#	# Subscriber JWT key
+	#	subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+	#	# Allow anonymous subscribers (double-check that it's what you want)
+	#	anonymous
+	#	# Enable the subscription API (double-check that it's what you want)
+	#	subscriptions
+	#	# Extra directives
+	#	{$MERCURE_EXTRA_DIRECTIVES}
+	#}
+	#vulcain
+
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+
+	php_server {
+		#worker /path/to/your/worker.php
+	}
+}
