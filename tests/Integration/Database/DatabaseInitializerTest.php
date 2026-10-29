@@ -6,6 +6,7 @@ use PDO;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\Test;
 use ReflectionMethod;
+use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
@@ -65,10 +66,14 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(PDOConnection::class, $mainConnection);
         $this->assertInstanceOf(PDOConnection::class, $backupConnection);
         $this->assertNotSame($mainConnection, $backupConnection);
-        $this->assertSame($mainConnection, $this->container->get(Database::class, 'main')->connection);
-        $this->assertSame($backupConnection, $this->container->get(Database::class, 'backup')->connection);
-        $this->assertSame('main', $this->container->get(Database::class, 'main')->tag);
-        $this->assertSame('backup', $this->container->get(Database::class, 'backup')->tag);
+        $main = $this->container->get(Database::class, 'main');
+        $backup = $this->container->get(Database::class, 'backup');
+        $this->assertInstanceOf(GenericDatabase::class, $main);
+        $this->assertInstanceOf(GenericDatabase::class, $backup);
+        $this->assertSame($mainConnection, $main->connection);
+        $this->assertSame($backupConnection, $backup->connection);
+        $this->assertSame('main', $main->tag);
+        $this->assertSame('backup', $backup->tag);
     }
 
     #[Test]
@@ -114,10 +119,14 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $this->container->singleton(Connection::class, $mainConnection, 'main');
         $this->container->singleton(Connection::class, $backupConnection, 'backup');
 
-        $this->assertSame($mainConnection, $this->container->get(Database::class, 'main')->connection);
-        $this->assertSame($backupConnection, $this->container->get(Database::class, 'backup')->connection);
-        $this->assertSame('main', $this->container->get(Database::class, 'main')->tag);
-        $this->assertSame('backup', $this->container->get(Database::class, 'backup')->tag);
+        $main = $this->container->get(Database::class, 'main');
+        $backup = $this->container->get(Database::class, 'backup');
+        $this->assertInstanceOf(GenericDatabase::class, $main);
+        $this->assertInstanceOf(GenericDatabase::class, $backup);
+        $this->assertSame($mainConnection, $main->connection);
+        $this->assertSame($backupConnection, $backup->connection);
+        $this->assertSame('main', $main->tag);
+        $this->assertSame('backup', $backup->tag);
     }
 
     #[Test]
@@ -144,10 +153,11 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $pdo->exec('CREATE TABLE outbox (message TEXT)');
 
         $connection = $this->createMock(Connection::class);
-        $connection->method('prepare')->willReturnCallback(
-            fn (string $sql): PDOStatement => $pdo->prepare($sql)
-                ?: throw new \RuntimeException('Could not prepare SQL statement.'),
-        );
+        $connection
+            ->method('prepare')
+            ->willReturnCallback(
+                fn (string $sql): PDOStatement => $pdo->prepare($sql) ?: throw new RuntimeException('Could not prepare SQL statement.'),
+            );
         $connection->expects($this->never())->method('connect');
         $connection->expects($this->never())->method('reconnect');
         $connection->expects($this->never())->method('ping');

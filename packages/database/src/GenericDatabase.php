@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use LogicException;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -30,11 +31,11 @@ final class GenericDatabase implements Database
     private ?Query $lastQuery = null;
 
     public DatabaseDialect $dialect {
-        get => $this->config?->dialect ?? throw new \LogicException('A database configuration is required to determine the dialect.');
+        get => $this->config->dialect ?? throw new LogicException('A database configuration is required to determine the dialect.');
     }
 
     public string|UnitEnum|null $tag {
-        get => $this->config?->tag ?? null;
+        get => $this->config->tag ?? null;
     }
 
     private DatabaseContext $context {
