@@ -22,6 +22,7 @@ use Tempest\Http\Session\ManageSessionMiddleware;
 use Tempest\Http\Session\PreviousUrl;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Status;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Support\Filesystem;
@@ -55,6 +56,7 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
         $this->manager = new FileSessionManager(
             clock: $this->container->get(Clock::class),
             sessionConfig: $this->config,
+            sessionIdResolver: $this->container->get(SessionIdResolver::class),
         );
     }
 

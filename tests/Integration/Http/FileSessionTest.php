@@ -16,6 +16,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
@@ -52,6 +53,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(FileSessionConfig::class),
+            $this->container->get(SessionIdResolver::class),
         ));
     }
 
@@ -152,6 +154,26 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
             },
             count: 1,
         );
+    }
+
+    #[Test]
+    public function regenerate_replaces_the_session_file(): void
+    {
+        $this->session->set('key', 'value');
+        $this->manager->save($this->session);
+
+        $previousPath = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+        $previousId = (string) $this->session->id;
+
+        $this->manager->regenerate($this->session);
+
+        $this->assertNotSame($previousId, (string) $this->session->id);
+        $this->assertFileDoesNotExist($previousPath);
+
+        $path = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+
+        $this->assertFileExists($path);
+        $this->assertSame('value', $this->session->get('key'));
     }
 
     #[Test]

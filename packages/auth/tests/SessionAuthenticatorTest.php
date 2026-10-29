@@ -13,6 +13,7 @@ use Tempest\Auth\Authentication\SessionAuthenticatorReset;
 use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 
 final class SessionAuthenticatorTest extends TestCase
@@ -136,6 +137,51 @@ final class SessionAuthenticatorTest extends TestCase
         $this->assertSame(2, $current->id);
     }
 
+    #[Test]
+    public function authenticate_regenerates_the_session_identifier(): void
+    {
+        $session = $this->createSession();
+        $sessionManager = new TestingSessionManager();
+
+        $authenticator = new SessionAuthenticator(
+            sessionManager: $sessionManager,
+            session: $session,
+            authenticatableResolver: new CountingAuthenticatableResolver(),
+        );
+
+        $authenticator->authenticate(new MemoizedAuthenticatable(id: 1));
+
+        $this->assertNotSame('test-session', (string) $session->id);
+        $this->assertSame(1, $sessionManager->deletedSessions);
+        $this->assertSame(1, $sessionManager->savedSessions);
+        $this->assertSame(1, $session->get(SessionAuthenticator::AUTHENTICATABLE_KEY));
+    }
+
+    #[Test]
+    public function deauthenticate_regenerates_the_session_identifier_and_discards_the_data(): void
+    {
+        $session = $this->createSession();
+        $session->set(SessionAuthenticator::AUTHENTICATABLE_KEY, 1);
+        $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
+        $session->set('key', 'value');
+        $sessionManager = new TestingSessionManager();
+
+        $authenticator = new SessionAuthenticator(
+            sessionManager: $sessionManager,
+            session: $session,
+            authenticatableResolver: new CountingAuthenticatableResolver(),
+        );
+
+        $authenticator->deauthenticate();
+
+        $this->assertNotSame('test-session', (string) $session->id);
+        $this->assertSame(1, $sessionManager->deletedSessions);
+        $this->assertSame(1, $sessionManager->savedSessions);
+        $this->assertNull($session->get(SessionAuthenticator::AUTHENTICATABLE_KEY));
+        $this->assertNull($session->get(SessionAuthenticator::AUTHENTICATABLE_CLASS));
+        $this->assertNull($session->get('key'));
+    }
+
     private function createSession(): Session
     {
         $now = DateTime::now();
@@ -186,9 +232,31 @@ final class CountingAuthenticatableResolver implements AuthenticatableResolver
     }
 }
 
+final class TestingSessionIdResolver implements SessionIdResolver
+{
+    public function resolve(): SessionId
+    {
+        return new SessionId('test-session');
+    }
+
+    public function issueNewId(): SessionId
+    {
+        return new SessionId('regenerated-session-' . uniqid());
+    }
+}
+
 final class TestingSessionManager implements SessionManager
 {
     public int $savedSessions = 0;
+
+    public int $deletedSessions = 0;
+
+    private SessionIdResolver $sessionIdResolver;
+
+    public function __construct()
+    {
+        $this->sessionIdResolver = new TestingSessionIdResolver();
+    }
 
     public function getOrCreate(SessionId $id): Session
     {
@@ -202,7 +270,19 @@ final class TestingSessionManager implements SessionManager
         $this->savedSessions++;
     }
 
-    public function delete(Session $session): void {}
+    public function delete(Session $session): void
+    {
+        $this->deletedSessions++;
+    }
+
+    public function regenerate(Session $session): void
+    {
+        $this->delete($session);
+
+        $session->replaceId($this->sessionIdResolver->issueNewId());
+
+        $this->save($session);
+    }
 
     public function isValid(Session $session): bool
     {

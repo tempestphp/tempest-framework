@@ -143,6 +143,17 @@ final class SessionTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function replace_id_preserves_data(): void
+    {
+        $this->session->set('key', 'value');
+
+        $this->session->replaceId(new SessionId('new_session'));
+
+        $this->assertSame('new_session', (string) $this->session->id);
+        $this->assertSame('value', $this->session->get('key'));
+    }
+
+    #[Test]
     public function session_is_reset(): void
     {
         $originalSession = $this->container->get(Session::class);
