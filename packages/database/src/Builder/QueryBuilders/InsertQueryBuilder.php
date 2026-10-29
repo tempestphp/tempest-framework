@@ -47,6 +47,12 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private array $after = [];
 
+    private array $relationCallbacks = [];
+
+    private array $resolvedRows = [];
+
+    private array $rowCallbacks = [];
+
     public array $bindings = [];
 
     public ModelInspector $model;
@@ -87,6 +93,22 @@ final class InsertQueryBuilder implements BuildsQuery
 
             if ($query instanceof BuildsQuery) {
                 $query->build()->execute();
+            }
+        }
+
+        foreach ($this->rowCallbacks as $rowIndex => $callbacks) {
+            $rowId = $id;
+
+            if ($this->model->hasUuidPrimaryKey()) {
+                $rowId = $this->resolveRowPrimaryKey($this->resolvedRows[$rowIndex] ?? []) ?? $id;
+            }
+
+            foreach ($callbacks as $after) {
+                $query = $after($rowId);
+
+                if ($query instanceof BuildsQuery) {
+                    $query->build()->execute();
+                }
             }
         }
 
@@ -224,7 +246,7 @@ final class InsertQueryBuilder implements BuildsQuery
             throw ModelDidNotHavePrimaryColumn::neededForRelation($this->model->getName(), 'HasMany');
         }
 
-        $this->after[] = function (PrimaryKey $parentId) use ($hasMany, $relations) {
+        $this->relationCallbacks[] = function (PrimaryKey $parentId) use ($hasMany, $relations) {
             $foreignKey = $hasMany->ownerJoin
                 ? $this->removeTablePrefix($hasMany->ownerJoin)
                 : $this->getDefaultForeignKeyName();
@@ -254,7 +276,7 @@ final class InsertQueryBuilder implements BuildsQuery
             return;
         }
 
-        $this->after[] = function (PrimaryKey $parentId) use ($hasOne, $relation) {
+        $this->relationCallbacks[] = function (PrimaryKey $parentId) use ($hasOne, $relation) {
             if ($hasOne->ownerJoin) {
                 return $this->handleCustomHasOneRelation($hasOne, $relation, $parentId);
             }
@@ -275,7 +297,7 @@ final class InsertQueryBuilder implements BuildsQuery
             throw ModelDidNotHavePrimaryColumn::neededForRelation(model: $this->model->getName(), relationType: 'BelongsToMany');
         }
 
-        $this->after[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
+        $this->relationCallbacks[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
             $ownerModel = inspect(model: $this->model->getName());
             $targetModel = inspect(model: $belongsToMany->property->getIterableType()->asClass());
 
@@ -377,10 +399,34 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private function resolveData(): array
     {
-        return Arr\map(
-            array: $this->rows,
-            map: $this->resolveModelData(...),
-        );
+        $resolved = [];
+
+        foreach ($this->rows as $row) {
+            $before = count($this->relationCallbacks);
+
+            $data = $this->resolveModelData($row);
+
+            $resolved[] = $data;
+            $this->resolvedRows[] = $data;
+            $this->rowCallbacks[] = array_slice($this->relationCallbacks, $before);
+        }
+
+        return $resolved;
+    }
+
+    private function resolveRowPrimaryKey(array $entry): ?PrimaryKey
+    {
+        $primaryKey = $this->model->getPrimaryKey();
+
+        if ($primaryKey === null || ! isset($entry[$primaryKey])) {
+            return null;
+        }
+
+        $value = $entry[$primaryKey];
+
+        return $value instanceof PrimaryKey
+            ? $value
+            : new PrimaryKey($value);
     }
 
     private function resolveModelData(object|iterable $model): array
