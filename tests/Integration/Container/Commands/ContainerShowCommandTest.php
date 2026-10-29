@@ -5,6 +5,7 @@ namespace Tests\Tempest\Integration\Container\Commands;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
+use Tempest\Container\Lifetime;
 use Tempest\Reflection\ClassReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use UnitEnum;
@@ -45,9 +46,9 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
+                public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null, ?Lifetime $lifetime = null): self
                 {
-                    $this->container->singleton($className, $definition, $tag);
+                    $this->container->singleton($className, $definition, $tag, $lifetime);
 
                     return $this;
                 }

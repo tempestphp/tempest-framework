@@ -16,7 +16,7 @@ interface Container extends ContainerInterface
 
     public function unregister(string $className, bool $tagged = false): self;
 
-    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self;
+    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null, ?Lifetime $lifetime = null): self;
 
     public function config(object $config): self;
 
