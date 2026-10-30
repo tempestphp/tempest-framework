@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Connection\ConnectionInitializer;
-use Tempest\Database\Connection\TaggedConnectionInitializer;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\EventBus\EventBus;
@@ -24,7 +23,6 @@ final class TaggedDynamicInitializerTest extends TestCase
         $container->singleton(SerializerFactory::class, new SerializerFactory($container));
         $container->singleton(EventBus::class, new GenericEventBus($container, new EventBusConfig()));
         $container->addInitializer(ConnectionInitializer::class);
-        $container->addInitializer(TaggedConnectionInitializer::class);
         $container->addInitializer(DatabaseInitializer::class);
 
         $container->config(new SQLiteConfig(
