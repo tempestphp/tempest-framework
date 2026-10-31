@@ -71,7 +71,6 @@ The user will have a chance to specify the destination of the file, and whether 
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
 use function Tempest\src_namespace;
 use function Tempest\src_path;
 

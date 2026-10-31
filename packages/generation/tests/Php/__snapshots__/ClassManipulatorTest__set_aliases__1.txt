@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Generation\Tests\Php\Fixtures;
 
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeCreateTableStatement;
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeMigration;
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeQueryStatement;
-use Tempest\Generation\Tests\Php\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Php\Fixtures\Database\MigrationModel as Model;
 
 use function Tempest\Database\inspect;

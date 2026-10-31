@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\PhpFile;
-
 final class ClassGenerator
 {
     use ManipulatesPhpClasses;
 
     public function __construct(string $name, string $namespace)
     {
-        $this->file = new PhpFile();
-        $this->classType = new ClassType($name);
-        $this->namespace = $namespace;
+        $this->file = PhpFile::create($namespace);
+        $this->class = $this->file->addClass($name);
     }
 }

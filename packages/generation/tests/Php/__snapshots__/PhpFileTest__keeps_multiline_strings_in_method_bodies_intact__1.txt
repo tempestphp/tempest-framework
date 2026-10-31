@@ -1,0 +1,16 @@
+<?php
+
+namespace App;
+
+class Example
+{
+    public function render(): string
+    {
+        $title = 'first line
+second line';
+
+        return <<<HTML
+            <h1>{$title}</h1>
+            HTML;
+    }
+}
