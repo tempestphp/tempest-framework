@@ -15,7 +15,7 @@ final class Author implements Bindable
         public string $name,
         public ?AuthorType $type = AuthorType::A,
 
-        /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Book[] */
+        /** @var Book[] */
         public array $books = [],
         public ?Publisher $publisher = null,
     ) {}

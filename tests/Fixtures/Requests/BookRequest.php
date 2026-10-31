@@ -9,6 +9,7 @@ use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
 use Tempest\Validation\Rules\HasLength;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 
 final class BookRequest implements Request
@@ -20,7 +21,7 @@ final class BookRequest implements Request
 
     public ?Author $author = null;
 
-    /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Chapter[] */
+    /** @var Chapter[] */
     public array $chapters = [];
 
     #[HasOne]
