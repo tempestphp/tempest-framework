@@ -14,7 +14,7 @@ final class MarkdownComponentTest extends FrameworkIntegrationTestCase
         <x-markdown># hi</x-markdown>
         HTML);
 
-        $this->assertSame('<h1>hi</h1>', $html);
+        $this->assertSame('<h1 id="hi">hi</h1>', $html);
     }
 
     #[Test]
@@ -24,6 +24,6 @@ final class MarkdownComponentTest extends FrameworkIntegrationTestCase
         <x-markdown :content="$text"></x-markdown>
         HTML, text: '# hi');
 
-        $this->assertSame('<h1>hi</h1>', $html);
+        $this->assertSame('<h1 id="hi">hi</h1>', $html);
     }
 }

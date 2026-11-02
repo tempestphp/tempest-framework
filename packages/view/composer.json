@@ -9,9 +9,8 @@
         "tempest/container": "3.x-dev",
         "tempest/validation": "3.x-dev",
         "tempest/clock": "3.x-dev",
-        "league/commonmark": "^2.7",
         "symfony/cache": "^7.3|^8.0",
-        "nette/schema": "^1.3.4"
+        "tempest/markdown": "^1.3"
     },
     "autoload": {
         "files": [
