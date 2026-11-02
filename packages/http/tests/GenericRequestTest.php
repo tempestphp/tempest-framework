@@ -187,9 +187,8 @@ final class GenericRequestTest extends TestCase
             uri: $uri,
         );
 
-        $this->assertSame($uri, $request->uri);
-        $this->assertSame('', $request->path);
-        $this->assertSame([], $request->query);
+        $this->assertSame($uri, $request->uri->path);
+        $this->assertSame([], $request->uri->query);
     }
 
     #[Test]

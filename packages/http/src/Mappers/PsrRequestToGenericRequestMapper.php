@@ -17,6 +17,7 @@ use Tempest\Http\RequestHeaders;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
+use Tempest\Support\Uri\Uri;
 use Throwable;
 
 use function Tempest\Mapper\map;
@@ -53,18 +54,23 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
 
         $headers = RequestHeaders::normalizeFromArray($headersAsString);
 
-        parse_str($from->getUri()->getQuery(), $query);
-
         $uploads = $this->createUploads($from->getUploadedFiles());
+
+        $uri = $from->getUri();
 
         return map([
             'method' => $this->requestMethod($from, $data),
-            'uri' => (string) $from->getUri(),
+            'uri' => new Uri(
+                scheme: $uri->getScheme(),
+                host: $uri->getHost(),
+                port: $uri->getPort(),
+                path: $uri->getPath(),
+                queryString: $uri->getQuery(),
+                fragment: $uri->getFragment(),
+            ),
             'raw' => $raw,
             'body' => $data,
             'headers' => $headers,
-            'path' => $from->getUri()->getPath(),
-            'query' => $query,
             'files' => $uploads,
             'ip' => $this->clientIpResolver->resolve($from->getServerParams()['REMOTE_ADDR'] ?? null, $headers),
             'cookies' => Arr\filter(Arr\map(

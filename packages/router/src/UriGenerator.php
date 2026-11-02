@@ -48,7 +48,7 @@ final class UriGenerator
         }
 
         return $this->signer->verify(
-            data: $this->createUri($request->path, ...Arr\remove_keys($request->query, 'signature')),
+            data: $this->createUri($request->uri->path, ...Arr\remove_keys($request->uri->query, 'signature')),
             signature: Signature::from($signature),
         );
     }

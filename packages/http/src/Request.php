@@ -6,22 +6,19 @@ namespace Tempest\Http;
 
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Support\Ip\IpAddress;
+use Tempest\Support\Uri\Uri;
 
 interface Request
 {
     public Method $method { get; }
 
-    public string $uri { get; }
+    public Uri $uri { get; }
 
     public ?string $raw { get; }
 
     public array $body { get; }
 
     public RequestHeaders $headers { get; }
-
-    public string $path { get; }
-
-    public array $query { get; }
 
     /** @var array<array-key, \Tempest\Http\Upload|array> $files */
     public array $files { get; }

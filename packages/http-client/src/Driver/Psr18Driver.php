@@ -44,7 +44,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         $request = $this->requestFactory->createRequest(
             method: $tempestRequest->method->value,
             uri: $this->uriFactory->createUri(
-                $tempestRequest->uri,
+                $tempestRequest->uri->toString(),
             ),
         );
 
