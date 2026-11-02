@@ -4,14 +4,14 @@
  * @var string|null $content The markdown content from a variable
  */
 
-use League\CommonMark\MarkdownConverter;
+use Tempest\Markdown\Markdown;
 use Tempest\View\Slot;
 
 use function Tempest\Container\get;
 
 $content ??= $slots[Slot::DEFAULT]->content ?? '';
-$markdown = get(MarkdownConverter::class);
-$parsed = $markdown->convert($content)->getContent();
+$markdown = get(Markdown::class);
+$parsed = $markdown->parse($content)->html;
 ?>
 
 {!! $parsed !!}
