@@ -11,6 +11,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Throwable;
@@ -23,6 +24,7 @@ final readonly class FileSessionManager implements SessionManager
     public function __construct(
         private Clock $clock,
         private FileSessionConfig $sessionConfig, // TODO: rename to $config, see RedisSessionManager and DatabaseSessionManager
+        private SessionIdResolver $sessionIdResolver,
     ) {}
 
     public function getOrCreate(SessionId $id): Session
@@ -74,6 +76,15 @@ final readonly class FileSessionManager implements SessionManager
         event(new SessionDeleted($session->id));
     }
 
+    public function regenerate(Session $session): void
+    {
+        $this->delete($session);
+
+        $session->replaceId($this->sessionIdResolver->issueNewId());
+
+        $this->save($session);
+    }
+
     public function isValid(Session $session): bool
     {
         return $this->clock->now()->before(
@@ -93,8 +104,11 @@ final readonly class FileSessionManager implements SessionManager
 
         foreach ($sessionFiles as $sessionFile) {
             $lastActiveAt = @filemtime($sessionFile);
+            if ($lastActiveAt === false) {
+                continue;
+            }
 
-            if ($lastActiveAt === false || $lastActiveAt > $expiredBefore) {
+            if ($lastActiveAt > $expiredBefore) {
                 continue;
             }
 

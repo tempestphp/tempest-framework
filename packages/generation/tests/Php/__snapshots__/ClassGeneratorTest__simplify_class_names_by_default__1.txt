@@ -11,7 +11,7 @@ class CreateUsersTable
     public function up(): FakeQueryStatement
     {
         return (new FakeCreateTableStatement(MigrationModel::table()))
-                ->primary()
-                ->text('name');
+            ->primary()
+            ->text('name');
     }
 }

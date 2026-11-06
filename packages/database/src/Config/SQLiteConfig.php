@@ -6,6 +6,7 @@ namespace Tempest\Database\Config;
 
 use PDO;
 use SensitiveParameter;
+use Tempest\Database\Exceptions\DatabaseConnectionStringWasInvalid;
 use Tempest\Database\Migrations\DatePrefixStrategy;
 use Tempest\Database\Migrations\MigrationNamingStrategy;
 use Tempest\Database\Tables\NamingStrategy;
@@ -68,4 +69,28 @@ final class SQLiteConfig implements DatabaseConfig
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
         public string|UnitEnum|null $tag = null,
     ) {}
+
+    /**
+     * Creates a SQLite configuration from a connection string, such as `sqlite:///path/to/database.sqlite` or `sqlite::memory:`.
+     *
+     * @param string $connectionString The connection string, using the `sqlite` scheme.
+     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the connection string.
+     */
+    public static function fromConnectionString(#[SensitiveParameter] string $connectionString, mixed ...$options): self
+    {
+        $parsed = DatabaseConnectionString::from($connectionString);
+
+        if ($parsed->scheme !== 'sqlite') {
+            throw DatabaseConnectionStringWasInvalid::schemeWasNotSupported($parsed->scheme, ['sqlite']);
+        }
+
+        if ($parsed->path === null) {
+            throw DatabaseConnectionStringWasInvalid::couldNotBeParsed();
+        }
+
+        return new self(...[
+            'path' => $parsed->path,
+            ...$options,
+        ]);
+    }
 }

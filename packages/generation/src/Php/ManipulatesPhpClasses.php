@@ -4,99 +4,75 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use Closure;
-use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\PhpFile;
-use Nette\PhpGenerator\PsrPrinter;
 use Tempest\Generation\Php\Exceptions\GeneratedClassWasMissingANamespace;
-
-use function Tempest\Support\str;
 
 /**
  * @internal
  */
 trait ManipulatesPhpClasses
 {
-    use SimplifiesClassNames;
-
-    protected ClassType $classType;
-
     protected PhpFile $file;
 
-    protected string $namespace;
+    protected PhpClass $class;
 
-    /** @var array<Closure> */
-    protected array $manipulations = [];
-
+    /**
+     * @param array<string, string> $parameters parameter names mapped to their types
+     */
     public function addMethod(
         string $name,
         string $body = '',
         array $parameters = [],
         string $returnType = 'void',
     ): self {
-        $method = $this->classType
-            ->addMethod($name, overwrite: true)
+        $method = $this->class
+            ->addMethod($name)
             ->setReturnType($returnType)
             ->setBody($body);
 
         foreach ($parameters as $parameter => $type) {
-            $method
-                ->addParameter($parameter)
-                ->setType($type);
+            $method->addParameter($parameter, $type);
         }
-
-        return $this;
-    }
-
-    public function manipulate(Closure $callback): self
-    {
-        $this->manipulations[] = $callback;
 
         return $this;
     }
 
     public function setClassName(string $name): self
     {
-        $this->classType->setName($name);
+        $this->class->setName($name);
 
         return $this;
     }
 
     public function removeMethod(string $name): self
     {
-        $this->classType->removeMethod($name);
+        $this->class->removeMethod($name);
 
         return $this;
     }
 
+    /**
+     * @param array<array-key, mixed> $arguments
+     */
     public function addMethodAttribute(string $method, string $attribute, array $arguments = []): self
     {
-        $method = $this->classType->getMethod($method);
-        $method->addAttribute($attribute, $arguments);
+        $this->class->getMethod($method)->addAttribute($attribute, $arguments);
 
         return $this;
     }
 
+    /**
+     * @param array<array-key, mixed> $arguments
+     */
     public function addClassAttribute(string $attributeName, array $arguments = []): self
     {
-        $this->classType->addAttribute($attributeName, $arguments);
+        $this->class->addAttribute($attributeName, $arguments);
 
         return $this;
     }
 
     public function removeClassAttribute(string $attributeName): self
     {
-        $attributes = $this->classType->getAttributes();
-
-        foreach ($attributes as $key => $attribute) {
-            if ($attribute->getName() !== $attributeName) {
-                continue;
-            }
-
-            unset($attributes[$key]);
-        }
-
-        $this->classType->setAttributes($attributes);
+        $this->class->removeAttribute($attributeName);
 
         return $this;
     }
@@ -110,21 +86,21 @@ trait ManipulatesPhpClasses
 
     public function setFinal(bool $final = true): self
     {
-        $this->classType->setFinal($final);
+        $this->class->setFinal($final);
 
         return $this;
     }
 
     public function setReadOnly(bool $readonly = true): self
     {
-        $this->classType->setReadOnly($readonly);
+        $this->class->setReadOnly($readonly);
 
         return $this;
     }
 
     public function setAbstract(bool $abstract = true): self
     {
-        $this->classType->setAbstract($abstract);
+        $this->class->setAbstract($abstract);
 
         return $this;
     }
@@ -138,67 +114,78 @@ trait ManipulatesPhpClasses
 
     public function setClassComment(?string $comment): self
     {
-        $this->classType->setComment($comment);
+        $this->class->setComment($comment);
 
         return $this;
     }
 
     public function addImplement(string $interface): self
     {
-        $this->classType->addImplement($interface);
+        $this->class->addImplement($interface);
 
         return $this;
     }
 
     public function addExtend(string $class): self
     {
-        $this->classType->setExtends($class);
+        $this->class->setExtends($class);
 
         return $this;
     }
 
     public function addTrait(string $trait): self
     {
-        $this->classType->addTrait($trait);
+        $this->class->addTrait($trait);
 
         return $this;
     }
 
     public function setNamespace(string $namespace): self
     {
-        $this->namespace = $namespace;
+        $this->file->setNamespace($namespace);
+
+        return $this;
+    }
+
+    public function simplifyClassNamesInMethodBodies(bool $simplify = true): self
+    {
+        $this->file->simplifyNamesInBodies($simplify);
+
+        return $this;
+    }
+
+    public function simplifyImplements(bool $simplify = true): self
+    {
+        $this->file->simplifyImplements($simplify);
+
+        return $this;
+    }
+
+    public function addUse(string $use): self
+    {
+        $this->file->addUse($use);
+
+        return $this;
+    }
+
+    public function setAlias(string $class, string $alias): self
+    {
+        $this->file->addUse($class, $alias);
 
         return $this;
     }
 
     public function getClassName(): string
     {
-        return $this->namespace . '\\' . $this->classType->getName();
+        return ltrim($this->file->getNamespace() . '\\' . $this->class->getName(), '\\');
     }
 
     public function print(): string
     {
-        if (! $this->namespace) {
+        if (! $this->file->getNamespace()) {
             throw new GeneratedClassWasMissingANamespace();
         }
 
-        $printer = new PsrPrinter();
-
-        $file = clone $this->file;
-        $namespace = $file->addNamespace($this->namespace);
-        $namespace->add($this->classType);
-
-        $file = $this->simplifyClassNames($file);
-        $code = $printer->printFile($file);
-
-        foreach ($this->manipulations as $manipulation) {
-            $code = (string) $manipulation(str($code));
-        }
-
-        $updatedFile = $file->fromCode($code);
-        $updatedFile->setComment($file->getComment());
-        $updatedFile = $this->simplifyClassNames($updatedFile);
-
-        return $printer->printFile($updatedFile);
+        return $this->file->print();
     }
 }

@@ -16,6 +16,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
@@ -52,6 +53,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(FileSessionConfig::class),
+            $this->container->get(SessionIdResolver::class),
         ));
     }
 
@@ -152,6 +154,26 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
             },
             count: 1,
         );
+    }
+
+    #[Test]
+    public function regenerate_replaces_the_session_file(): void
+    {
+        $this->session->set('key', 'value');
+        $this->manager->save($this->session);
+
+        $previousPath = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+        $previousId = (string) $this->session->id;
+
+        $this->manager->regenerate($this->session);
+
+        $this->assertNotSame($previousId, (string) $this->session->id);
+        $this->assertFileDoesNotExist($previousPath);
+
+        $path = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+
+        $this->assertFileExists($path);
+        $this->assertSame('value', $this->session->get('key'));
     }
 
     #[Test]
@@ -261,6 +283,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $session = $this->manager->getOrCreate($id);
         $session->set('user', 'brent');
+
         $this->manager->save($session);
 
         $unchanged = $this->manager->getOrCreate($id);
@@ -268,6 +291,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         // Another request writes to the same session in the meantime
         $concurrent = $this->manager->getOrCreate($id);
         $concurrent->set('cart', 'book');
+
         $this->manager->save($concurrent);
 
         $clock->plus(Duration::minutes(5));
@@ -287,6 +311,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $session = $this->manager->getOrCreate($id);
         $session->set('user', 'brent');
+
         $this->manager->save($session);
 
         $clock->plus(Duration::minutes(5));

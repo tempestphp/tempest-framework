@@ -1,0 +1,9 @@
+<?php
+
+namespace App;
+
+use Tempest\Generation\Tests\Php\Fixtures\SampleNamespace\SampleEnum;
+use Tempest\Generation\Tests\Php\Fixtures\TestAttribute;
+
+#[TestAttribute(name: 'example', case: SampleEnum::FIRST, values: [1, -2, 'three' => true, 'four' => null], expression: PHP_VERSION_ID >= 80500)]
+class Example {}

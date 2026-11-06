@@ -19,6 +19,7 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Random;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -46,6 +47,7 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new DatabaseSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(SessionConfig::class),
+            $this->container->get(SessionIdResolver::class),
         ));
 
         $this->database->reset(migrate: false);
@@ -161,6 +163,24 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
             },
             count: 1,
         );
+    }
+
+    #[Test]
+    public function regenerate_replaces_the_session_record(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->session->set('magic_type', 'offensive');
+        $this->manager->save($this->session);
+
+        $previousId = $this->session->id;
+
+        $this->manager->regenerate($this->session);
+
+        $this->assertNotSame((string) $previousId, (string) $this->session->id);
+        $this->assertSessionNotExistsInDatabase($previousId);
+        $this->assertSessionExistsInDatabase($this->session->id);
+        $this->assertSessionDataInDatabase($this->session->id, ['magic_type' => 'offensive']);
     }
 
     #[Test]

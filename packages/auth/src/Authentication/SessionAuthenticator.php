@@ -43,15 +43,20 @@ final class SessionAuthenticator implements Authenticator
         $this->currentId = $id;
         $this->currentClass = $class;
         $this->current = $authenticatable;
+
+        // The session identifier must not survive a change in privilege level, or one
+        // known to an attacker before authentication stays valid afterwards.
+        $this->sessionManager->regenerate($this->session);
     }
 
     public function deauthenticate(): void
     {
-        $this->session->remove(self::AUTHENTICATABLE_KEY);
-        $this->session->remove(self::AUTHENTICATABLE_CLASS);
         $this->clearCurrent();
 
-        $this->sessionManager->save($this->session);
+        // Discard session data so authenticated user data is not carried over
+        // to the new identifier.
+        $this->session->clear();
+        $this->sessionManager->regenerate($this->session);
     }
 
     public function current(): ?Authenticatable
