@@ -173,6 +173,8 @@ final class RouteBindingInitializer implements DynamicInitializer
 }
 ```
 
+The container remembers the outcome of `canInitialize` for every class and tag, so it should only depend on those two arguments.
+
 ## Autowired dependencies
 
 When you need to assign a default implementation to an interface without any specific instantiation steps, creating an initializer class for a single line of code might feel excessive.
