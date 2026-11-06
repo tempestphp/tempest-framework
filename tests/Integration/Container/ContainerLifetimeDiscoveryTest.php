@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Container;
 
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Tempest\Container\AutowireDiscovery;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\InitializerDiscovery;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeClassInitializer;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeDynamicInitializer;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeInitializer;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeInterface;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeSingleton;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Reflection\ClassReflector;
+use Tests\Tempest\Integration\Container\Fixtures\RequestLifetimeClassInitializer;
+use Tests\Tempest\Integration\Container\Fixtures\RequestLifetimeDynamicInitializer;
+use Tests\Tempest\Integration\Container\Fixtures\RequestLifetimeInitializer;
+use Tests\Tempest\Integration\Container\Fixtures\RequestLifetimeInterface;
+use Tests\Tempest\Integration\Container\Fixtures\RequestLifetimeSingleton;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

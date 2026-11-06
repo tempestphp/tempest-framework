@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Container\Tests\Fixtures;
+namespace Tests\Tempest\Integration\Container\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
