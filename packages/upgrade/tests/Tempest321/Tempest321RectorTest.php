@@ -13,17 +13,33 @@ final class Tempest321RectorTest extends TestCase
     }
 
     #[Test]
-    public function container_implementations_receive_the_optional_lifetime(): void
+    public function session_implementation_methods_are_added(): void
     {
         $this->rector
-            ->runFixture(__DIR__ . '/Fixtures/ContainerImplementation.input.php')
-            ->assertContains('use Tempest\\Container\\Lifetime;')
-            ->assertContains('public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null, ?Lifetime $lifetime = null): self');
+            ->runFixture(__DIR__ . '/Fixtures/SessionImplementations.input.php')
+            ->assertContains('public function regenerate(Session $session): void')
+            ->assertContains('public function issueNewId(): SessionId')
+            ->assertContains("throw new BadMethodCallException('regenerate() is not implemented yet.');")
+            ->assertContains("throw new BadMethodCallException('issueNewId() is not implemented yet.');");
     }
 
     #[Test]
-    public function unrelated_or_already_updated_methods_are_unchanged(): void
+    public function aliased_session_implementations_are_updated(): void
     {
-        $this->assertSame('', $this->rector->runFixture(__DIR__ . '/Fixtures/Unchanged.input.php')->actual);
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/AliasedSessionImplementations.input.php')
+            ->assertContains('public function regenerate(Session $session): void')
+            ->assertContains('public function issueNewId(): SessionId');
+    }
+
+    #[Test]
+    public function existing_session_methods_are_not_overwritten(): void
+    {
+        $this->assertSame(
+            '',
+            $this->rector
+                ->runFixture(__DIR__ . '/Fixtures/ExistingSessionImplementations.input.php')
+                ->actual,
+        );
     }
 }

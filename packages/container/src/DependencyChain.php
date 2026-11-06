@@ -32,6 +32,19 @@ final class DependencyChain
         return $this;
     }
 
+    /**
+     * Removes the last added dependency from the active resolution chain.
+     *
+     * Because dependencies are resolved in nested order, the most recently
+     * added item is always the one that just finished.
+     */
+    public function pop(): self
+    {
+        array_pop($this->dependencies);
+
+        return $this;
+    }
+
     public function first(): Dependency
     {
         return array_first($this->dependencies);

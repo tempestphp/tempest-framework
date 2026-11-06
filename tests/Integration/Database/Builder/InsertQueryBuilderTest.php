@@ -316,4 +316,26 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['php'], $query->bindings);
     }
+
+    #[Test]
+    public function insert_with_zero_id_falls_back_to_last_insert_id(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $id = query(Book::class)
+            ->insert(['id' => 0, 'title' => 'Zero ID Book'])
+            ->execute();
+
+        $this->assertInstanceOf(PrimaryKey::class, $id);
+
+        $book = query(Book::class)->get($id);
+
+        $this->assertNotNull($book);
+        $this->assertSame('Zero ID Book', $book->title);
+    }
 }

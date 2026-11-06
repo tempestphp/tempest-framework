@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Generated;
+
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Router\HttpMiddleware;
+use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Priority;
+
+#[Priority(Priority::NORMAL)]
+final class GeneratedClass implements HttpMiddleware
+{
+    public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
+    {
+        return $next($request);
+    }
+}

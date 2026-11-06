@@ -7,7 +7,7 @@ namespace Tempest\Generation\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Generation\Php\ClassManipulator;
-use Tempest\Generation\Tests\Php\Fixtures\ClassWithDummyStringToBeReplacedByFqcn;
+use Tempest\Generation\Php\PhpFile;
 use Tempest\Generation\Tests\Php\Fixtures\ClassWithMethodParameterAttributes;
 use Tempest\Generation\Tests\Php\Fixtures\ClassWithTraitInAnotherNamespace;
 use Tempest\Generation\Tests\Php\Fixtures\CreateMigrationsTable;
@@ -15,7 +15,7 @@ use Tempest\Generation\Tests\Php\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Php\Fixtures\SampleNamespace\DummyFqcn;
 use Tempest\Generation\Tests\Php\Fixtures\TestAttribute;
 use Tempest\Generation\Tests\Php\Fixtures\WelcomeController;
-use Tempest\Support\Str\ImmutableString;
+use Tempest\Support\Filesystem;
 
 /**
  * @internal
@@ -160,17 +160,6 @@ final class ClassManipulatorTest extends TestCase
     }
 
     #[Test]
-    public function manipulates_classes(): void
-    {
-        $class = new ClassManipulator(WelcomeController::class);
-        $class->setNamespace('App\\Controllers');
-        $class->setClassName('WelcomeController');
-        $class->manipulate(fn (ImmutableString $string) => $string->replace('welcome', 'home'));
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
     public function simplifies_traits_from_another_namespace(): void
     {
         $class = new ClassManipulator(ClassWithTraitInAnotherNamespace::class);
@@ -187,10 +176,15 @@ final class ClassManipulatorTest extends TestCase
     }
 
     #[Test]
-    public function make_replacements_before_converting_fqcn(): void
+    public function simplifies_fully_qualified_names_in_loaded_code(): void
     {
-        $class = new ClassManipulator(ClassWithDummyStringToBeReplacedByFqcn::class);
-        $class->manipulate(fn (ImmutableString $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
+        $code = str_replace(
+            "'fqcn-to-be-replaced'",
+            sprintf('\\%s::class', DummyFqcn::class),
+            Filesystem\read_file(__DIR__ . '/Fixtures/ClassWithDummyStringToBeReplacedByFqcn.php'),
+        );
+
+        $class = new ClassManipulator(PhpFile::fromCode($code));
 
         $this->assertMatchesSnapshot($class->print());
     }

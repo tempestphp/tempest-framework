@@ -29,7 +29,7 @@ final class Timelock
     public function invoke(callable $callback, Duration $duration): mixed
     {
         $exception = null;
-        $start = microtime(as_float: true);
+        $start = $this->clock->timestamp();
 
         try {
             $result = $callback($this);
@@ -37,7 +37,7 @@ final class Timelock
             $exception = $thrown;
         }
 
-        $remainderInMicroseconds = intval($duration->getTotalMicroseconds() - ((microtime(true) - $start) * 1_000_000));
+        $remainderInMicroseconds = intval($duration->getTotalMicroseconds() - $this->clock->timestamp()->since($start)->getTotalMicroseconds());
 
         if (! $this->canReturnEarly && $remainderInMicroseconds > 0) {
             $this->clock->sleep(Duration::microseconds($remainderInMicroseconds));

@@ -11,8 +11,8 @@ final readonly class CreateUsersTable implements \Tempest\Generation\Tests\Php\F
     public function up(): FakeQueryStatement
     {
         return (new FakeCreateTableStatement(MigrationModel::table()))
-                ->primary()
-                ->text('name');
+            ->primary()
+            ->text('name');
     }
 
     public function getName(): string

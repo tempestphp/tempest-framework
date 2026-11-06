@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest321\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest322\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\Lifetime;

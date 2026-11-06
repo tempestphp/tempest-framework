@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Container\get;
@@ -48,9 +50,48 @@ final class Query
             return null;
         }
 
-        return isset($query->bindings[$this->primaryKeyColumn])
-            ? new PrimaryKey($query->bindings[$this->primaryKeyColumn])
+        if (isset($query->bindings[$this->primaryKeyColumn])) {
+            return new PrimaryKey($query->bindings[$this->primaryKeyColumn]);
+        }
+
+        // Insert bindings are positional; resolve the primary key through its column position.
+        $positionalValue = $this->resolvePositionalPrimaryKeyBinding($query);
+
+        return $positionalValue !== null
+            ? new PrimaryKey($positionalValue)
             : $database->getLastInsertId();
+    }
+
+    private function resolvePositionalPrimaryKeyBinding(Query $query): mixed
+    {
+        if (! $this->sql instanceof InsertStatement) {
+            return null;
+        }
+
+        $firstEntry = $this->sql->entries->first();
+
+        if ($firstEntry instanceof ImmutableArray) {
+            $firstEntry = $firstEntry->toArray();
+        }
+
+        if (! is_array($firstEntry)) {
+            return null;
+        }
+
+        $index = array_search($this->primaryKeyColumn, array_keys($firstEntry), strict: true);
+
+        if ($index === false) {
+            return null;
+        }
+
+        $value = $query->bindings[$index] ?? null;
+
+        // 0 is treated as "auto-increment" by MySQL/PostgreSQL — not a real id.
+        if ($value === 0 || $value === null) {
+            return null;
+        }
+
+        return $value;
     }
 
     public function fetch(mixed ...$bindings): array
