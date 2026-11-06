@@ -17,13 +17,14 @@ use Tempest\Container\Tests\Fixtures\RequestLifetimeSingleton;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Reflection\ClassReflector;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * These tests rely on `tempest/discovery`, which is not a dependency of `tempest/container`.
  *
  * @internal
  */
-final class ContainerLifetimeDiscoveryTest extends TestCase
+final class ContainerLifetimeDiscoveryTest extends FrameworkIntegrationTestCase
 {
     #[Test]
     public function initializer_singletons_are_shared_until_reset(): void
