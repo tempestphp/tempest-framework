@@ -8,6 +8,7 @@ use PhpParser\Node\ComplexType;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\UnionType;
 
@@ -66,7 +67,7 @@ final class TypeParser
             return new Name($lowercased);
         }
 
-        return new Name\FullyQualified(ltrim($type, '\\'));
+        return new FullyQualified(ltrim($type, '\\'));
     }
 
     /**

@@ -8,6 +8,12 @@ use PhpParser\Node\DeclareItem;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\Token;
 use Tempest\Generation\Php\Exceptions\ClassWasMissing;
 use Tempest\Support\Filesystem;
@@ -39,7 +45,7 @@ final class PhpFile
 
     public static function create(?string $namespace = null): self
     {
-        return new self($namespace ? [new Stmt\Namespace_(new Name($namespace))] : []);
+        return new self($namespace ? [new Namespace_(new Name($namespace))] : []);
     }
 
     public static function fromCode(string $code): self
@@ -66,16 +72,16 @@ final class PhpFile
     {
         $existing = $this->findNamespace();
 
-        if ($existing !== null) {
+        if ($existing instanceof Namespace_) {
             $existing->name = new Name($namespace);
 
             return $this;
         }
 
-        $declares = array_filter($this->stmts, static fn (Stmt $stmt) => $stmt instanceof Stmt\Declare_);
-        $stmts = array_filter($this->stmts, static fn (Stmt $stmt) => ! $stmt instanceof Stmt\Declare_);
+        $declares = array_filter($this->stmts, static fn (Stmt $stmt) => $stmt instanceof Declare_);
+        $stmts = array_filter($this->stmts, static fn (Stmt $stmt) => ! $stmt instanceof Declare_);
 
-        $this->stmts = [...$declares, new Stmt\Namespace_(new Name($namespace), array_values($stmts))];
+        $this->stmts = [...$declares, new Namespace_(new Name($namespace), array_values($stmts))];
 
         return $this;
     }
@@ -91,16 +97,16 @@ final class PhpFile
     {
         $declaration = $this->findStrictTypesDeclaration();
 
-        if ($strictTypes && $declaration !== null) {
+        if ($strictTypes && $declaration instanceof DeclareItem) {
             $declaration->value = new Int_(1);
         } elseif ($strictTypes) {
             $position = $this->hasComment() ? 1 : 0;
 
             array_splice($this->stmts, $position, 0, [
-                new Stmt\Declare_([new DeclareItem('strict_types', new Int_(1))]),
+                new Declare_([new DeclareItem('strict_types', new Int_(1))]),
                 Printer::blankLine(),
             ]);
-        } elseif ($declaration !== null) {
+        } elseif ($declaration instanceof DeclareItem) {
             $this->removeDeclaration($declaration);
         }
 
@@ -114,7 +120,7 @@ final class PhpFile
         }
 
         if ($comment !== null) {
-            array_unshift($this->stmts, new Stmt\Nop(['comments' => [DocComment::from($comment)]]));
+            array_unshift($this->stmts, new Nop(['comments' => [DocComment::from($comment)]]));
         }
 
         return $this;
@@ -128,7 +134,7 @@ final class PhpFile
         $stmts = &$this->body();
 
         $imports = Imports::from($stmts);
-        $imports->add(Stmt\Use_::TYPE_NORMAL, ltrim($name, '\\'), $alias);
+        $imports->add(Use_::TYPE_NORMAL, ltrim($name, '\\'), $alias);
         $imports->insertInto($stmts);
 
         return $this;
@@ -136,7 +142,7 @@ final class PhpFile
 
     public function hasClass(?string $name = null): bool
     {
-        return $this->findClass($name) !== null;
+        return $this->findClass($name) instanceof Class_;
     }
 
     public function getClass(?string $name = null): PhpClass
@@ -146,7 +152,7 @@ final class PhpFile
 
     public function addClass(string $name): PhpClass
     {
-        $class = new Stmt\Class_($name);
+        $class = new Class_($name);
         $stmts = &$this->body();
 
         array_push($stmts, ...$stmts === [] ? [$class] : [Printer::blankLine(), $class]);
@@ -219,7 +225,7 @@ final class PhpFile
     private function &body(): array
     {
         foreach ($this->stmts as $stmt) {
-            if ($stmt instanceof Stmt\Namespace_) {
+            if ($stmt instanceof Namespace_) {
                 return $stmt->stmts;
             }
         }
@@ -227,18 +233,20 @@ final class PhpFile
         return $this->stmts;
     }
 
-    private function findNamespace(): ?Stmt\Namespace_
+    private function findNamespace(): ?Namespace_
     {
-        return array_find($this->stmts, static fn (Stmt $stmt) => $stmt instanceof Stmt\Namespace_);
+        return array_find($this->stmts, static fn (Stmt $stmt) => $stmt instanceof Namespace_);
     }
 
-    private function findClass(?string $name): ?Stmt\Class_
+    private function findClass(?string $name): ?Class_
     {
         foreach ($this->body() as $stmt) {
-            if (! $stmt instanceof Stmt\Class_ || $stmt->name === null) {
+            if (! $stmt instanceof Class_) {
                 continue;
             }
-
+            if ($stmt->name === null) {
+                continue;
+            }
             if ($name === null || $stmt->name->toLowerString() === strtolower($name)) {
                 return $stmt;
             }
@@ -255,10 +263,12 @@ final class PhpFile
         $classes = [];
 
         foreach ($this->body() as $stmt) {
-            if (! $stmt instanceof Stmt\ClassLike || $stmt->name === null) {
+            if (! $stmt instanceof ClassLike) {
                 continue;
             }
-
+            if ($stmt->name === null) {
+                continue;
+            }
             $classes[$stmt->name->toLowerString()] = true;
         }
 
@@ -268,7 +278,7 @@ final class PhpFile
     private function findStrictTypesDeclaration(): ?DeclareItem
     {
         foreach ($this->stmts as $stmt) {
-            if (! $stmt instanceof Stmt\Declare_) {
+            if (! $stmt instanceof Declare_) {
                 continue;
             }
 
@@ -285,10 +295,12 @@ final class PhpFile
     private function removeDeclaration(DeclareItem $declaration): void
     {
         foreach ($this->stmts as $index => $stmt) {
-            if (! $stmt instanceof Stmt\Declare_ || ! in_array($declaration, $stmt->declares, strict: true)) {
+            if (! $stmt instanceof Declare_) {
                 continue;
             }
-
+            if (! in_array($declaration, $stmt->declares, strict: true)) {
+                continue;
+            }
             $stmt->declares = array_values(array_filter($stmt->declares, static fn (DeclareItem $item) => $item !== $declaration));
 
             if ($stmt->declares === []) {
@@ -319,7 +331,7 @@ final class PhpFile
                 $comments .= $comment->getText() . "\n";
             }
 
-            if (! $stmt instanceof Stmt\Class_) {
+            if (! $stmt instanceof Class_) {
                 continue;
             }
 
@@ -335,6 +347,6 @@ final class PhpFile
     {
         $first = $this->stmts[0] ?? null;
 
-        return $first instanceof Stmt\Nop && ! Printer::isBlankLine($first) && $first->getComments() !== [];
+        return $first instanceof Nop && ! Printer::isBlankLine($first) && $first->getComments() !== [];
     }
 }

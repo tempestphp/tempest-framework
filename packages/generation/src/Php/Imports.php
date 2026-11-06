@@ -7,6 +7,9 @@ namespace Tempest\Generation\Php;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
 
 /**
@@ -33,13 +36,13 @@ final class Imports
         $imports = new self();
 
         foreach ($stmts as $stmt) {
-            if ($stmt instanceof Stmt\Use_) {
+            if ($stmt instanceof Use_) {
                 foreach ($stmt->uses as $item) {
                     $imports->register($stmt->type, $item->name->toString(), $item->getAlias()->toString());
                 }
-            } elseif ($stmt instanceof Stmt\GroupUse) {
+            } elseif ($stmt instanceof GroupUse) {
                 foreach ($stmt->uses as $item) {
-                    $type = $stmt->type !== Stmt\Use_::TYPE_UNKNOWN ? $stmt->type : $item->type;
+                    $type = $stmt->type !== Use_::TYPE_UNKNOWN ? $stmt->type : $item->type;
                     $imports->register($type, Name::concat($stmt->prefix, $item->name)->toString(), $item->getAlias()->toString());
                 }
             }
@@ -63,7 +66,7 @@ final class Imports
         }
 
         if ($name->isQualified()) {
-            return self::key(Stmt\Use_::TYPE_NORMAL, $name->getFirst());
+            return self::key(Use_::TYPE_NORMAL, $name->getFirst());
         }
 
         return self::key($type, $name->getFirst());
@@ -89,7 +92,7 @@ final class Imports
         }
 
         if (! $name->isRelative()) {
-            $import = $this->resolve(Stmt\Use_::TYPE_NORMAL, $name->getFirst());
+            $import = $this->resolve(Use_::TYPE_NORMAL, $name->getFirst());
 
             if ($import !== null) {
                 return $name->isQualified() ? $import . '\\' . $name->slice(1)?->toString() : $import;
@@ -129,7 +132,7 @@ final class Imports
                 continue;
             }
 
-            self::insertImport($stmts, $type, new Stmt\Use_([$item], $type));
+            $this->insertImport($stmts, $type, new Use_([$item], $type));
         }
     }
 
@@ -140,7 +143,7 @@ final class Imports
     public static function hasUnused(array $stmts, array $used): bool
     {
         foreach ($stmts as $stmt) {
-            if (! $stmt instanceof Stmt\Use_) {
+            if (! $stmt instanceof Use_) {
                 continue;
             }
 
@@ -163,7 +166,7 @@ final class Imports
     public static function removeUnused(array &$stmts, array $previouslyUsed, array $used, string $comments): void
     {
         foreach ($stmts as $index => $stmt) {
-            if (! $stmt instanceof Stmt\Use_) {
+            if (! $stmt instanceof Use_) {
                 continue;
             }
 
@@ -204,16 +207,16 @@ final class Imports
     {
         foreach ($stmts as $stmt) {
             $items = match (true) {
-                $stmt instanceof Stmt\Use_ && $stmt->type === $type => $stmt->uses,
-                $stmt instanceof Stmt\GroupUse => array_filter(
+                $stmt instanceof Use_ && $stmt->type === $type => $stmt->uses,
+                $stmt instanceof GroupUse => array_filter(
                     $stmt->uses,
-                    static fn (UseItem $item) => ($stmt->type !== Stmt\Use_::TYPE_UNKNOWN ? $stmt->type : $item->type) === $type,
+                    static fn (UseItem $item) => ($stmt->type !== Use_::TYPE_UNKNOWN ? $stmt->type : $item->type) === $type,
                 ),
                 default => [],
             };
 
             foreach ($items as $item) {
-                $itemName = $stmt instanceof Stmt\GroupUse ? Name::concat($stmt->prefix, $item->name) : $item->name;
+                $itemName = $stmt instanceof GroupUse ? Name::concat($stmt->prefix, $item->name) : $item->name;
 
                 if (strcasecmp($itemName->toString(), $name) !== 0) {
                     continue;
@@ -233,18 +236,18 @@ final class Imports
     /**
      * @param Stmt[] $stmts
      */
-    private static function insertImport(array &$stmts, int $type, Stmt\Use_ $import): void
+    private function insertImport(array &$stmts, int $type, Use_ $import): void
     {
         $name = $import->uses[0]->name->toString();
         $lastImportBefore = null;
         $lastImportType = null;
 
         foreach ($stmts as $index => $stmt) {
-            if (! $stmt instanceof Stmt\Use_ && ! $stmt instanceof Stmt\GroupUse && ! $stmt instanceof Stmt\Declare_ && ! Printer::isBlankLine($stmt)) {
+            if (! $stmt instanceof Use_ && ! $stmt instanceof GroupUse && ! $stmt instanceof Declare_ && ! Printer::isBlankLine($stmt)) {
                 break;
             }
 
-            if (! $stmt instanceof Stmt\Use_) {
+            if (! $stmt instanceof Use_) {
                 continue;
             }
 
@@ -282,7 +285,7 @@ final class Imports
 
         $position = 0;
 
-        while (isset($stmts[$position]) && $stmts[$position] instanceof Stmt\Declare_) {
+        while (isset($stmts[$position]) && $stmts[$position] instanceof Declare_) {
             $position++;
         }
 

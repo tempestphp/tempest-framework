@@ -6,6 +6,8 @@ namespace Tempest\Generation\Php\DataObjects;
 
 use InvalidArgumentException;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Namespace_;
 use ReflectionClass;
 use Tempest\Generation\Php\Exceptions\PhpCodeWasInvalid;
 use Tempest\Generation\Php\SourceParser;
@@ -57,7 +59,7 @@ final readonly class StubFile
         }
 
         foreach ($stmts as $stmt) {
-            if (! $stmt instanceof Stmt\Namespace_) {
+            if (! $stmt instanceof Namespace_) {
                 continue;
             }
 
@@ -66,6 +68,6 @@ final readonly class StubFile
             break;
         }
 
-        return array_any($stmts, static fn (Stmt $stmt) => $stmt instanceof Stmt\Class_);
+        return array_any($stmts, static fn (Stmt $stmt) => $stmt instanceof Class_);
     }
 }

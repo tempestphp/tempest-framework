@@ -6,8 +6,15 @@ namespace Tempest\Generation\Php;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UseItem;
 
 /**
  * Clones parsed code so it can be changed and printed format-preserving, resolving names
@@ -34,7 +41,7 @@ final class Cloner
     public function cloneStatements(array $stmts): array
     {
         /** @var Stmt[] */
-        return $this->cloneValue($stmts, Stmt\Use_::TYPE_NORMAL);
+        return $this->cloneValue($stmts, Use_::TYPE_NORMAL);
     }
 
     private function cloneValue(mixed $value, int $nameType): mixed
@@ -65,10 +72,10 @@ final class Cloner
             return $clone;
         }
 
-        if ($node instanceof Stmt\Namespace_) {
+        if ($node instanceof Namespace_) {
             $this->namespace = $node->name?->toString();
             $this->imports = [];
-        } elseif ($node instanceof Stmt\Use_ || $node instanceof Stmt\GroupUse) {
+        } elseif ($node instanceof Use_ || $node instanceof GroupUse) {
             $this->import($node);
         }
 
@@ -87,20 +94,20 @@ final class Cloner
     private function nameTypeOf(Node $node): int
     {
         return match (true) {
-            $node instanceof Stmt\Namespace_, $node instanceof Stmt\Use_, $node instanceof Stmt\GroupUse, $node instanceof Node\UseItem => self::UNRESOLVED,
-            $node instanceof Expr\FuncCall => Stmt\Use_::TYPE_FUNCTION,
-            $node instanceof Expr\ConstFetch => Stmt\Use_::TYPE_CONSTANT,
-            default => Stmt\Use_::TYPE_NORMAL,
+            $node instanceof Namespace_, $node instanceof Use_, $node instanceof GroupUse, $node instanceof UseItem => self::UNRESOLVED,
+            $node instanceof FuncCall => Use_::TYPE_FUNCTION,
+            $node instanceof ConstFetch => Use_::TYPE_CONSTANT,
+            default => Use_::TYPE_NORMAL,
         };
     }
 
-    private function import(Stmt\Use_|Stmt\GroupUse $node): void
+    private function import(Use_|GroupUse $node): void
     {
         foreach ($node->uses as $item) {
-            $type = $node->type !== Stmt\Use_::TYPE_UNKNOWN ? $node->type : $item->type;
-            $name = $node instanceof Stmt\GroupUse ? Name::concat($node->prefix, $item->name) : $item->name;
+            $type = $node->type !== Use_::TYPE_UNKNOWN ? $node->type : $item->type;
+            $name = $node instanceof GroupUse ? Name::concat($node->prefix, $item->name) : $item->name;
 
-            $this->imports[$type][self::aliasKey($type, $item->getAlias()->toString())] = $name->toString();
+            $this->imports[$type][$this->aliasKey($type, $item->getAlias()->toString())] = $name->toString();
         }
     }
 
@@ -122,10 +129,10 @@ final class Cloner
 
         if ($name->isRelative()) {
             $resolved = $this->prefixNamespace($name->toString());
-        } elseif ($type !== Stmt\Use_::TYPE_NORMAL && $name->isUnqualified()) {
-            $resolved = $this->imports[$type][self::aliasKey($type, $name->toString())] ?? $this->resolveGlobally($name, $type);
+        } elseif ($type !== Use_::TYPE_NORMAL && $name->isUnqualified()) {
+            $resolved = $this->imports[$type][$this->aliasKey($type, $name->toString())] ?? $this->resolveGlobally($name, $type);
         } else {
-            $import = $this->imports[Stmt\Use_::TYPE_NORMAL][strtolower($name->getFirst())] ?? null;
+            $import = $this->imports[Use_::TYPE_NORMAL][strtolower($name->getFirst())] ?? null;
             $resolved = match (true) {
                 $import === null => $this->prefixNamespace($name->toString()),
                 $name->isQualified() => $import . '\\' . $name->slice(1)?->toString(),
@@ -134,7 +141,7 @@ final class Cloner
         }
 
         if ($resolved !== null) {
-            $name->setAttribute(Names::RESOLVED_NAME_ATTRIBUTE, new Name\FullyQualified($resolved));
+            $name->setAttribute(Names::RESOLVED_NAME_ATTRIBUTE, new FullyQualified($resolved));
         }
     }
 
@@ -148,7 +155,7 @@ final class Cloner
             return null;
         }
 
-        if ($type === Stmt\Use_::TYPE_CONSTANT && in_array($name->toLowerString(), ['true', 'false', 'null'], strict: true)) {
+        if ($type === Use_::TYPE_CONSTANT && in_array($name->toLowerString(), ['true', 'false', 'null'], strict: true)) {
             return null;
         }
 
@@ -160,8 +167,8 @@ final class Cloner
         return $this->namespace === null ? $name : $this->namespace . '\\' . $name;
     }
 
-    private static function aliasKey(int $type, string $alias): string
+    private function aliasKey(int $type, string $alias): string
     {
-        return $type === Stmt\Use_::TYPE_CONSTANT ? $alias : strtolower($alias);
+        return $type === Use_::TYPE_CONSTANT ? $alias : strtolower($alias);
     }
 }

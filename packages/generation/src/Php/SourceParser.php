@@ -7,6 +7,7 @@ namespace Tempest\Generation\Php;
 use PhpParser\Error;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PhpVersion;
@@ -40,7 +41,7 @@ final class SourceParser
     {
         [$stmts] = self::parse("<?php {$code};");
 
-        if (count($stmts) !== 1 || ! $stmts[0] instanceof Stmt\Expression) {
+        if (count($stmts) !== 1 || ! $stmts[0] instanceof Expression) {
             throw new PhpCodeWasInvalid(new Error(sprintf('"%s" is not a single expression', $code)));
         }
 

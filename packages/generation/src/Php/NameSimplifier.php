@@ -6,8 +6,17 @@ namespace Tempest\Generation\Php;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
 
 /**
  * Makes sure every name resolves correctly in its namespace, importing fully qualified names where possible.
@@ -55,17 +64,17 @@ final class NameSimplifier
         }
 
         foreach ($stmts as $stmt) {
-            $this->visit($stmt, null, Stmt\Use_::TYPE_NORMAL, inBody: false, inImplements: false, methodBody: null);
+            $this->visit($stmt, null, Use_::TYPE_NORMAL, inBody: false, inImplements: false, methodBody: null);
         }
 
         foreach ($this->names as [$name, $type, $inBody, $inImplements, $methodBody]) {
             $simplified = match ($type) {
-                Stmt\Use_::TYPE_NORMAL => $this->simplifyClassName($name, $inBody, $inImplements),
-                Stmt\Use_::TYPE_FUNCTION => $this->simplifyFunctionName($name, $inBody),
+                Use_::TYPE_NORMAL => $this->simplifyClassName($name, $inBody, $inImplements),
+                Use_::TYPE_FUNCTION => $this->simplifyFunctionName($name, $inBody),
                 default => $this->qualifyBrokenName($name, $type),
             };
 
-            if ($simplified !== null) {
+            if ($simplified instanceof Name) {
                 $this->replace($name, $simplified);
                 $methodBody?->replaceName($name, $simplified);
             }
@@ -85,7 +94,7 @@ final class NameSimplifier
      */
     private function visit(Node $node, ?Node $parent, int $nameType, bool $inBody, bool $inImplements, ?MethodBody $methodBody): void
     {
-        if ($parent !== null) {
+        if ($parent instanceof Node) {
             $this->parents[spl_object_id($node)] = $parent;
         }
 
@@ -98,29 +107,29 @@ final class NameSimplifier
             return;
         }
 
-        if ($node instanceof Stmt\Use_ || $node instanceof Stmt\GroupUse) {
+        if ($node instanceof Use_ || $node instanceof GroupUse) {
             return;
         }
 
-        if ($node instanceof Stmt\Function_) {
+        if ($node instanceof Function_) {
             $this->reservedFunctions[$node->name->toLowerString()] = true;
         }
 
         $childNameType = match (true) {
-            $node instanceof Stmt\Namespace_ => self::IGNORED,
-            $node instanceof Expr\FuncCall => Stmt\Use_::TYPE_FUNCTION,
-            $node instanceof Expr\ConstFetch => Stmt\Use_::TYPE_CONSTANT,
-            default => Stmt\Use_::TYPE_NORMAL,
+            $node instanceof Namespace_ => self::IGNORED,
+            $node instanceof FuncCall => Use_::TYPE_FUNCTION,
+            $node instanceof ConstFetch => Use_::TYPE_CONSTANT,
+            default => Use_::TYPE_NORMAL,
         };
-        $hasBody = $node instanceof Stmt\ClassMethod || $node instanceof Stmt\Function_;
-        $bodyMethodBody = $node instanceof Stmt\ClassMethod ? $node->getAttribute(MethodBody::ATTRIBUTE) ?? $methodBody : $methodBody;
+        $hasBody = $node instanceof ClassMethod || $node instanceof Function_;
+        $bodyMethodBody = $node instanceof ClassMethod ? $node->getAttribute(MethodBody::ATTRIBUTE) ?? $methodBody : $methodBody;
 
         foreach ($node->getSubNodeNames() as $subNodeName) {
             $value = $node->{$subNodeName};
             $isBody = $hasBody && $subNodeName === 'stmts';
             $childInBody = $inBody || $isBody;
             $childMethodBody = $isBody ? $bodyMethodBody : $methodBody;
-            $childInImplements = $node instanceof Stmt\Class_ && $subNodeName === 'implements';
+            $childInImplements = $node instanceof Class_ && $subNodeName === 'implements';
 
             foreach (is_array($value) ? $value : [$value] as $child) {
                 if (! $child instanceof Node) {
@@ -143,15 +152,15 @@ final class NameSimplifier
 
         $first = $name->getFirst();
 
-        if ($type !== Stmt\Use_::TYPE_NORMAL && $name->isUnqualified()) {
-            if ($type === Stmt\Use_::TYPE_FUNCTION && $this->imports->resolve($type, $first) === null) {
+        if ($type !== Use_::TYPE_NORMAL && $name->isUnqualified()) {
+            if ($type === Use_::TYPE_FUNCTION && $this->imports->resolve($type, $first) === null) {
                 $this->reservedFunctions[strtolower($first)] = true;
             }
 
             return;
         }
 
-        if ($this->imports->resolve(Stmt\Use_::TYPE_NORMAL, $first) !== null) {
+        if ($this->imports->resolve(Use_::TYPE_NORMAL, $first) !== null) {
             return;
         }
 
@@ -226,16 +235,16 @@ final class NameSimplifier
         $alias = $this->importClass($fullyQualifiedName);
 
         if ($alias === null) {
-            return $name->isFullyQualified() ? null : new Name\FullyQualified($fullyQualifiedName);
+            return $name->isFullyQualified() ? null : new FullyQualified($fullyQualifiedName);
         }
 
-        return new Name($alias, [Names::RESOLVED_NAME_ATTRIBUTE => new Name\FullyQualified($fullyQualifiedName)]);
+        return new Name($alias, [Names::RESOLVED_NAME_ATTRIBUTE => new FullyQualified($fullyQualifiedName)]);
     }
 
     private function simplifyFunctionName(Name $name, bool $inBody): ?Name
     {
         if (! $name->isFullyQualified()) {
-            return $this->qualifyBrokenName($name, Stmt\Use_::TYPE_FUNCTION);
+            return $this->qualifyBrokenName($name, Use_::TYPE_FUNCTION);
         }
 
         if ($inBody && ! $this->simplifyBodies) {
@@ -248,16 +257,16 @@ final class NameSimplifier
             return null;
         }
 
-        $alias = $this->imports->aliasOf(Stmt\Use_::TYPE_FUNCTION, $fullyQualifiedName);
+        $alias = $this->imports->aliasOf(Use_::TYPE_FUNCTION, $fullyQualifiedName);
 
         if ($alias === null) {
             $alias = Names::lastSegment($fullyQualifiedName);
 
-            if ($this->imports->resolve(Stmt\Use_::TYPE_FUNCTION, $alias) !== null || isset($this->reservedFunctions[strtolower($alias)])) {
+            if ($this->imports->resolve(Use_::TYPE_FUNCTION, $alias) !== null || isset($this->reservedFunctions[strtolower($alias)])) {
                 return null;
             }
 
-            $this->imports->add(Stmt\Use_::TYPE_FUNCTION, $fullyQualifiedName);
+            $this->imports->add(Use_::TYPE_FUNCTION, $fullyQualifiedName);
         }
 
         return new Name($alias);
@@ -282,7 +291,7 @@ final class NameSimplifier
             return null;
         }
 
-        return new Name\FullyQualified($fullyQualifiedName);
+        return new FullyQualified($fullyQualifiedName);
     }
 
     /**
@@ -290,7 +299,7 @@ final class NameSimplifier
      */
     private function importClass(string $fullyQualifiedName): ?string
     {
-        $alias = $this->imports->aliasOf(Stmt\Use_::TYPE_NORMAL, $fullyQualifiedName);
+        $alias = $this->imports->aliasOf(Use_::TYPE_NORMAL, $fullyQualifiedName);
 
         if ($alias !== null) {
             return $alias;
@@ -298,7 +307,7 @@ final class NameSimplifier
 
         $shortName = Names::lastSegment($fullyQualifiedName);
 
-        if ($this->imports->resolve(Stmt\Use_::TYPE_NORMAL, $shortName) !== null) {
+        if ($this->imports->resolve(Use_::TYPE_NORMAL, $shortName) !== null) {
             return null;
         }
 
@@ -314,7 +323,7 @@ final class NameSimplifier
             return null;
         }
 
-        $this->imports->add(Stmt\Use_::TYPE_NORMAL, $fullyQualifiedName);
+        $this->imports->add(Use_::TYPE_NORMAL, $fullyQualifiedName);
 
         return $shortName;
     }

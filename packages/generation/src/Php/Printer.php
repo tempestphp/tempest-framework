@@ -5,8 +5,21 @@ declare(strict_types=1);
 namespace Tempest\Generation\Php;
 
 use Override;
+use PhpParser\Internal\TokenStream;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\EnumCase;
+use PhpParser\Node\Stmt\InlineHTML;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\Token;
@@ -35,14 +48,14 @@ final class Printer extends Standard
     /**
      * A statement that separates the surrounding statements by a blank line when they are inserted into existing code.
      */
-    public static function blankLine(): Stmt\Nop
+    public static function blankLine(): Nop
     {
-        return new Stmt\Nop([self::BLANK_LINE_ATTRIBUTE => true]);
+        return new Nop([self::BLANK_LINE_ATTRIBUTE => true]);
     }
 
     public static function isBlankLine(Node $node): bool
     {
-        return $node instanceof Stmt\Nop && $node->getAttribute(self::BLANK_LINE_ATTRIBUTE) === true;
+        return $node instanceof Nop && $node->getAttribute(self::BLANK_LINE_ATTRIBUTE) === true;
     }
 
     /**
@@ -72,12 +85,12 @@ final class Printer extends Standard
     #[Override]
     protected function p(Node $node, int $precedence = self::MAX_PRECEDENCE, int $lhsPrecedence = self::MAX_PRECEDENCE, bool $parentFormatPreserved = false): string
     {
-        if ($this->origTokens === null) {
+        if (! $this->origTokens instanceof TokenStream) {
             return $this->{'p' . $node->getType()}($node, $precedence, $lhsPrecedence);
         }
 
         $original = $node->getAttribute('origNode');
-        $canBeCopied = $parentFormatPreserved || ! $node instanceof Stmt\InlineHTML;
+        $canBeCopied = $parentFormatPreserved || ! $node instanceof InlineHTML;
 
         if ($original instanceof Node && $canBeCopied && Changes::isUnchanged($node)) {
             $start = $original->getStartTokenPos();
@@ -97,19 +110,19 @@ final class Printer extends Standard
         }
 
         $code = $this->origTokens->getTokenCode($pos, $origNodes[0]->getStartTokenPos(), $indentAdjustment);
-        $pos = $this->origTokens->skipRightWhitespace($origNodes[array_key_last($origNodes)]->getEndTokenPos() + 1);
+        $pos = $this->origTokens->skipRightWhitespace(array_last($origNodes)->getEndTokenPos() + 1);
 
         return $code;
     }
 
     #[Override]
-    protected function pStmt_Nop(Stmt\Nop $node): string
+    protected function pStmt_Nop(Nop $node): string
     {
         return self::isBlankLine($node) ? self::BLANK_LINE_MARKER : '';
     }
 
     #[Override]
-    protected function pStmt_Declare(Stmt\Declare_ $node): string
+    protected function pStmt_Declare(Declare_ $node): string
     {
         $stmts = $node->stmts;
 
@@ -117,11 +130,11 @@ final class Printer extends Standard
     }
 
     #[Override]
-    protected function pStmt_Namespace(Stmt\Namespace_ $node): string
+    protected function pStmt_Namespace(Namespace_ $node): string
     {
         $name = $node->name;
 
-        if (! $this->canUseSemicolonNamespaces || $name === null) {
+        if (! $this->canUseSemicolonNamespaces || ! $name instanceof Name) {
             return parent::pStmt_Namespace($node);
         }
 
@@ -131,15 +144,15 @@ final class Printer extends Standard
     }
 
     #[Override]
-    protected function pClassCommon(Stmt\Class_ $node, string $afterClassToken): string
+    protected function pClassCommon(Class_ $node, string $afterClassToken): string
     {
         $extends = $node->extends;
         $declaration =
-            $this->pAttrGroups($node->attrGroups, $node->name === null)
+            $this->pAttrGroups($node->attrGroups, ! $node->name instanceof Identifier)
             . $this->pModifiers($node->flags)
             . 'class'
             . $afterClassToken
-            . ($extends !== null ? ' extends ' . $this->p($extends) : '')
+            . ($extends instanceof Name ? ' extends ' . $this->p($extends) : '')
             . ($node->implements !== [] ? ' implements ' . $this->pCommaSeparated($node->implements) : '');
 
         $this->indent();
@@ -154,7 +167,7 @@ final class Printer extends Standard
     }
 
     #[Override]
-    protected function pStmt_ClassMethod(Stmt\ClassMethod $node): string
+    protected function pStmt_ClassMethod(ClassMethod $node): string
     {
         $multiline = $this->shouldBreakParameters($node->params);
         $returnType = $node->returnType;
@@ -168,7 +181,7 @@ final class Printer extends Standard
             . '('
             . $this->pParams($node->params)
             . ')'
-            . ($returnType !== null ? ': ' . $this->p($returnType) : '');
+            . ($returnType instanceof Node ? ': ' . $this->p($returnType) : '');
 
         if ($node->stmts === null) {
             return $signature . ';';
@@ -199,7 +212,7 @@ final class Printer extends Standard
     }
 
     #[Override]
-    protected function pParam(Node\Param $node): string
+    protected function pParam(Param $node): string
     {
         if (! $this->multilineParameters || $node->attrGroups === []) {
             return parent::pParam($node);
@@ -235,7 +248,7 @@ final class Printer extends Standard
 
             $comments = $node->getComments();
 
-            if ($node instanceof Stmt\Nop) {
+            if ($node instanceof Nop) {
                 $code .= $this->pComments($comments);
             } else {
                 $code .= ($comments !== [] ? $this->pComments($comments) . $this->nl : '') . $this->p($node);
@@ -249,14 +262,14 @@ final class Printer extends Standard
 
     private function belongTogether(Node $previous, Node $node): bool
     {
-        if ($previous instanceof Stmt\Use_ && $node instanceof Stmt\Use_) {
+        if ($previous instanceof Use_ && $node instanceof Use_) {
             return $previous->type === $node->type;
         }
 
-        return $previous::class === $node::class && ($node instanceof Stmt\TraitUse || $node instanceof Stmt\EnumCase);
+        return $previous::class === $node::class && ($node instanceof TraitUse || $node instanceof EnumCase);
     }
 
-    private function pMethodBody(Stmt\ClassMethod $node): string
+    private function pMethodBody(ClassMethod $node): string
     {
         $methodBody = $node->getAttribute(MethodBody::ATTRIBUTE);
 
@@ -274,7 +287,7 @@ final class Printer extends Standard
      */
     private function shouldBreakParameters(array $params): bool
     {
-        return array_any($params, static fn (Node\Param $param) => $param->flags !== 0 || $param->attrGroups !== [] || $param->getComments() !== []);
+        return array_any($params, static fn (Param $param) => $param->flags !== 0 || $param->attrGroups !== [] || $param->getComments() !== []);
     }
 
     private function indentation(int $additionalLevels): string

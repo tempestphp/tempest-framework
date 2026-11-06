@@ -7,6 +7,7 @@ namespace Tempest\Generation\Php;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\ClassMethod;
 
 final readonly class PhpMethod
 {
@@ -14,7 +15,7 @@ final readonly class PhpMethod
      * @internal
      */
     public function __construct(
-        private Stmt\ClassMethod $node,
+        private ClassMethod $node,
     ) {}
 
     public function getName(): string
