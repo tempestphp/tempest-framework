@@ -5,19 +5,26 @@ declare(strict_types=1);
 namespace Tempest\Database\Connection;
 
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
-final class ConnectionInitializer implements Initializer
+final class ConnectionInitializer implements DynamicInitializer
 {
     /** @var Connection[] */
     private static array $connections = [];
 
-    #[Singleton]
-    public function initialize(Container $container): Connection
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
-        $config = $container->get(DatabaseConfig::class);
+        return $class->getName() === Connection::class;
+    }
+
+    #[Singleton]
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Connection
+    {
+        $config = $container->get(DatabaseConfig::class, $tag);
         $connectionKey = $this->getConnectionKey($config);
 
         $connection = $config->usePersistentConnection
