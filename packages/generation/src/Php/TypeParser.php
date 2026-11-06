@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\ComplexType;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\IntersectionType;
@@ -66,7 +67,7 @@ final class TypeParser
             return new Name($lowercased);
         }
 
-        return new Name\FullyQualified(ltrim($type, '\\'));
+        return new FullyQualified(ltrim($type, '\\'));
     }
 
     /**

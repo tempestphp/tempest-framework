@@ -92,7 +92,7 @@ final class ExceptionTester
                 return true;
             }
 
-            return class_exists($exception) && is_a($reported, $exception, allow_string: true);
+            return class_exists($exception) && $reported instanceof $exception;
         });
     }
 

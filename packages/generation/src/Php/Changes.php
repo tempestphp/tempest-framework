@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\DeclareItem;
+use PhpParser\Node\AttributeGroup;
+use PhpParser\Node\Param;
+use PhpParser\Node\UseItem;
 use PhpParser\Node;
 use PhpParser\Node\Stmt;
 
@@ -22,16 +32,16 @@ final class Changes
      * so any other node can only change when a name inside it is replaced, which marks it as changed.
      */
     private const array MUTABLE_NODES = [
-        Stmt\Namespace_::class => true,
-        Stmt\Use_::class => true,
-        Stmt\GroupUse::class => true,
-        Stmt\Class_::class => true,
-        Stmt\ClassMethod::class => true,
-        Stmt\Declare_::class => true,
-        Node\DeclareItem::class => true,
-        Node\AttributeGroup::class => true,
-        Node\Param::class => true,
-        Node\UseItem::class => true,
+        Namespace_::class => true,
+        Use_::class => true,
+        GroupUse::class => true,
+        Class_::class => true,
+        ClassMethod::class => true,
+        Declare_::class => true,
+        DeclareItem::class => true,
+        AttributeGroup::class => true,
+        Param::class => true,
+        UseItem::class => true,
     ];
 
     /**

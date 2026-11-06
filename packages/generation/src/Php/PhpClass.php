@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Modifiers;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
@@ -16,7 +20,7 @@ final readonly class PhpClass
      * @internal
      */
     public function __construct(
-        private Stmt\Class_ $node,
+        private Class_ $node,
     ) {}
 
     public function getName(): string
@@ -48,7 +52,7 @@ final readonly class PhpClass
 
     public function setExtends(?string $class): self
     {
-        $this->node->extends = $class !== null ? new Name\FullyQualified(ltrim($class, '\\')) : null;
+        $this->node->extends = $class !== null ? new FullyQualified(ltrim($class, '\\')) : null;
 
         return $this;
     }
@@ -59,18 +63,18 @@ final readonly class PhpClass
             return $this;
         }
 
-        $this->node->implements[] = new Name\FullyQualified(ltrim($interface, '\\'));
+        $this->node->implements[] = new FullyQualified(ltrim($interface, '\\'));
 
         return $this;
     }
 
     public function addTrait(string $trait): self
     {
-        $traitUse = new Stmt\TraitUse([new Name\FullyQualified(ltrim($trait, '\\'))]);
+        $traitUse = new TraitUse([new FullyQualified(ltrim($trait, '\\'))]);
         $lastTraitUse = null;
 
         foreach ($this->node->stmts as $index => $stmt) {
-            if (! $stmt instanceof Stmt\TraitUse) {
+            if (! $stmt instanceof TraitUse) {
                 continue;
             }
 
@@ -112,7 +116,7 @@ final readonly class PhpClass
 
     public function hasMethod(string $name): bool
     {
-        return $this->findMethod($name) !== null;
+        return $this->findMethod($name) instanceof ClassMethod;
     }
 
     public function getMethod(string $name): PhpMethod
@@ -127,7 +131,7 @@ final readonly class PhpClass
      */
     public function addMethod(string $name): PhpMethod
     {
-        $method = new Stmt\ClassMethod($name, ['flags' => Modifiers::PUBLIC, 'stmts' => []]);
+        $method = new ClassMethod($name, ['flags' => Modifiers::PUBLIC, 'stmts' => []]);
         $index = $this->findMethodIndex($name);
 
         if ($index !== null) {
@@ -159,13 +163,13 @@ final readonly class PhpClass
         return $this;
     }
 
-    private function findMethod(string $name): ?Stmt\ClassMethod
+    private function findMethod(string $name): ?ClassMethod
     {
-        return array_find($this->node->getMethods(), static fn (Stmt\ClassMethod $method) => $method->name->toLowerString() === strtolower($name));
+        return array_find($this->node->getMethods(), static fn (ClassMethod $method) => $method->name->toLowerString() === strtolower($name));
     }
 
     private function findMethodIndex(string $name): ?int
     {
-        return array_find_key($this->node->stmts, static fn (Stmt $stmt) => $stmt instanceof Stmt\ClassMethod && $stmt->name->toLowerString() === strtolower($name));
+        return array_find_key($this->node->stmts, static fn (Stmt $stmt) => $stmt instanceof ClassMethod && $stmt->name->toLowerString() === strtolower($name));
     }
 }

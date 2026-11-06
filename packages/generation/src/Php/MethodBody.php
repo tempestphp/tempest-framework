@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\Node\Expr\ShellExec;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
@@ -96,10 +99,12 @@ final class MethodBody
         $lines = explode("\n", $code);
 
         foreach ($lines as $index => $line) {
-            if ($line === '' || isset($this->verbatimLines[$index])) {
+            if ($line === '') {
                 continue;
             }
-
+            if (isset($this->verbatimLines[$index])) {
+                continue;
+            }
             $lines[$index] = $indentation . substr($line, min($this->indentation, strspn($line, " \t")));
         }
 
@@ -119,7 +124,7 @@ final class MethodBody
         $strings = new NodeFinder()->find(
             $stmts,
             static fn (Node $node) => (
-                ($node instanceof Scalar\String_ || $node instanceof Scalar\InterpolatedString || $node instanceof Expr\ShellExec)
+                ($node instanceof String_ || $node instanceof InterpolatedString || $node instanceof ShellExec)
                 && $node->getStartLine() !== $node->getEndLine()
             ),
         );
@@ -129,7 +134,7 @@ final class MethodBody
         foreach ($strings as $string) {
             // The parser counts the opening tag as the first line, and a string's first line keeps its indentation.
             $stringLines = range($string->getStartLine() - 1, $string->getEndLine() - 2);
-            $isHeredoc = in_array($string->getAttribute('kind'), [Scalar\String_::KIND_HEREDOC, Scalar\String_::KIND_NOWDOC], strict: true);
+            $isHeredoc = in_array($string->getAttribute('kind'), [String_::KIND_HEREDOC, String_::KIND_NOWDOC], strict: true);
 
             if ($isHeredoc && ! self::hasTabIndentation(array_intersect_key($lines, array_flip($stringLines)))) {
                 continue;
@@ -150,10 +155,12 @@ final class MethodBody
         $indentation = PHP_INT_MAX;
 
         foreach ($lines as $index => $line) {
-            if (isset($verbatimLines[$index]) || trim($line) === '') {
+            if (isset($verbatimLines[$index])) {
                 continue;
             }
-
+            if (trim($line) === '') {
+                continue;
+            }
             $indentation = min($indentation, strspn($line, " \t"));
         }
 
