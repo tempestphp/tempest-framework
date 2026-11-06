@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\Error;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PhpVersion;

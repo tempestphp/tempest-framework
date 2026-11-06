@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Modifiers;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\TraitUse;
 use Tempest\Generation\Php\Exceptions\MethodWasMissing;
 
 final readonly class PhpClass

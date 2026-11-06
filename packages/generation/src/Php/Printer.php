@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
+use Override;
 use PhpParser\Internal\TokenStream;
-use PhpParser\Node\Name;
+use PhpParser\Node;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Nop;
-use PhpParser\Node\Stmt\InlineHTML;
-use PhpParser\Node\Stmt\Declare_;
-use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Param;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Node\Stmt\EnumCase;
-use Override;
-use PhpParser\Node;
-use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\InlineHTML;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\Token;
@@ -85,7 +85,7 @@ final class Printer extends Standard
     #[Override]
     protected function p(Node $node, int $precedence = self::MAX_PRECEDENCE, int $lhsPrecedence = self::MAX_PRECEDENCE, bool $parentFormatPreserved = false): string
     {
-        if (!$this->origTokens instanceof TokenStream) {
+        if (! $this->origTokens instanceof TokenStream) {
             return $this->{'p' . $node->getType()}($node, $precedence, $lhsPrecedence);
         }
 
@@ -134,7 +134,7 @@ final class Printer extends Standard
     {
         $name = $node->name;
 
-        if (! $this->canUseSemicolonNamespaces || !$name instanceof Name) {
+        if (! $this->canUseSemicolonNamespaces || ! $name instanceof Name) {
             return parent::pStmt_Namespace($node);
         }
 
@@ -148,7 +148,7 @@ final class Printer extends Standard
     {
         $extends = $node->extends;
         $declaration =
-            $this->pAttrGroups($node->attrGroups, !$node->name instanceof Identifier)
+            $this->pAttrGroups($node->attrGroups, ! $node->name instanceof Identifier)
             . $this->pModifiers($node->flags)
             . 'class'
             . $afterClassToken

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\ClassLike;
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\Declare_;
-use PhpParser\Node\Stmt\Nop;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\DeclareItem;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\Token;
 use Tempest\Generation\Php\Exceptions\ClassWasMissing;
 use Tempest\Support\Filesystem;

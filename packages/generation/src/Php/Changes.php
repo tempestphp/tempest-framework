@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node;
+use PhpParser\Node\AttributeGroup;
+use PhpParser\Node\DeclareItem;
+use PhpParser\Node\Param;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Declare_;
-use PhpParser\Node\DeclareItem;
-use PhpParser\Node\AttributeGroup;
-use PhpParser\Node\Param;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
-use PhpParser\Node;
-use PhpParser\Node\Stmt;
 
 /**
  * Tells which nodes of loaded code are identical to the node they were cloned from,

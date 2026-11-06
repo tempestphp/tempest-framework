@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Scalar\InterpolatedString;
-use PhpParser\Node\Expr\ShellExec;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ShellExec;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar;
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeFinder;
 

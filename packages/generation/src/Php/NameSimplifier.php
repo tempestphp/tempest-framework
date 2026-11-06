@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\GroupUse;
-use PhpParser\Node\Stmt\Function_;
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
 
 /**
  * Makes sure every name resolves correctly in its namespace, importing fully qualified names where possible.

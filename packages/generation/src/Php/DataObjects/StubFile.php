@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php\DataObjects;
 
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\Class_;
 use InvalidArgumentException;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Namespace_;
 use ReflectionClass;
 use Tempest\Generation\Php\Exceptions\PhpCodeWasInvalid;
 use Tempest\Generation\Php\SourceParser;

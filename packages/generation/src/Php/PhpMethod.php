@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\ClassMethod;
 
 final readonly class PhpMethod
 {

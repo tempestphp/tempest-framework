@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\GroupUse;
-use PhpParser\Node\UseItem;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UseItem;
 
 /**
  * Clones parsed code so it can be changed and printed format-preserving, resolving names

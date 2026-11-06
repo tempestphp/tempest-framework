@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\ComplexType;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\UnionType;
 

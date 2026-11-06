@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Php;
 
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\GroupUse;
-use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\UseItem;
 
 /**
