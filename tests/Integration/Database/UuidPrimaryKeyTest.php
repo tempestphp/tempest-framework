@@ -145,6 +145,57 @@ final class UuidPrimaryKeyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function batch_insert_attaches_relations_to_their_own_parent(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateUuidUsersTableMigration::class,
+            CreateUuidRolesTableMigration::class,
+            CreateUuidUserRoleTableMigration::class,
+            CreateUuidPostsTableMigration::class,
+        );
+
+        $role = query(UuidRole::class)->create(name: 'admin');
+
+        $frieren = UuidUser::new(name: 'Frieren');
+        $frieren->posts = [new UuidPost(title: 'Post A')];
+        $frieren->roles = [$role];
+
+        $fern = UuidUser::new(name: 'Fern');
+        $fern->posts = [new UuidPost(title: 'Post B')];
+        $fern->roles = [$role];
+
+        query(UuidUser::class)->insert($frieren, $fern)->execute();
+
+        $userIds = [];
+
+        foreach (query('uuid_users')->select()->all() as $user) {
+            $userIds[$user['name']] = $user['id'];
+        }
+
+        $this->assertCount(2, $userIds);
+        $this->assertNotSame($userIds['Frieren'], $userIds['Fern']);
+
+        $posts = query('uuid_posts')->select()->all();
+
+        $this->assertCount(2, $posts);
+
+        foreach ($posts as $post) {
+            $this->assertSame($userIds[$post['title'] === 'Post A' ? 'Frieren' : 'Fern'], $post['uuid_user_id']);
+        }
+
+        $pivotRows = query('uuid_user_role')->select()->all();
+        $ownerIds = array_column($pivotRows, 'uuid_user_id');
+
+        sort($ownerIds);
+
+        $expectedOwnerIds = [$userIds['Frieren'], $userIds['Fern']];
+        sort($expectedOwnerIds);
+
+        $this->assertSame($expectedOwnerIds, $ownerIds);
+    }
+
+    #[Test]
     public function uuid_primary_key_belongs_to_many_pivot_uses_generated_uuid(): void
     {
         $this->database->migrate(
