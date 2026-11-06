@@ -10,6 +10,7 @@ use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Direction;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryExecuted;
 use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Events\QueryLogger;
@@ -23,6 +24,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -255,18 +257,69 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     public function order_by_sql_generation(): void
     {
         $this->assertSameWithoutBackticks(
-            expected: 'SELECT * FROM `books` ORDER BY `title` ASC',
+            expected: 'SELECT * FROM `books` ORDER BY `books`.`title` ASC',
             actual: query('books')->select()->orderBy('title')->compile(),
         );
 
         $this->assertSameWithoutBackticks(
-            expected: 'SELECT * FROM `books` ORDER BY `title` DESC',
+            expected: 'SELECT * FROM `books` ORDER BY `books`.`title` DESC',
             actual: query('books')->select()->orderBy('title', Direction::DESC)->compile(),
         );
 
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM `books` ORDER BY title DESC NULLS LAST',
             actual: query('books')->select()->orderByRaw('title DESC NULLS LAST')->compile(),
+        );
+    }
+
+    #[Test]
+    public function order_by_qualifies_bare_field_with_base_table_and_leaves_dotted_fields_alone(): void
+    {
+        $this->assertSameWithoutBackticks(
+            expected: 'SELECT * FROM `authors` ORDER BY `authors`.`name` ASC',
+            actual: query('authors')->select()->orderBy('name')->compile(),
+        );
+
+        $this->assertSameWithoutBackticks(
+            expected: 'SELECT * FROM `authors` ORDER BY `publishers`.`name` ASC',
+            actual: query('authors')->select()->orderBy('publishers.name')->compile(),
+        );
+    }
+
+    #[Test]
+    public function order_by_with_joined_table_uses_base_table_column_for_ambiguous_bare_field(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        query(Publisher::class)
+            ->insert(id: new PrimaryKey(1), name: 'Alpha Publisher', description: 'd')
+            ->execute();
+        query(Publisher::class)
+            ->insert(id: new PrimaryKey(2), name: 'Zeta Publisher', description: 'd')
+            ->execute();
+        query(Author::class)
+            ->insert(id: new PrimaryKey(1), name: 'Beta Author', type: AuthorType::A, publisher_id: new PrimaryKey(2))
+            ->execute();
+        query(Author::class)
+            ->insert(id: new PrimaryKey(2), name: 'Alpha Author', type: AuthorType::A, publisher_id: new PrimaryKey(1))
+            ->execute();
+
+        // `name` exists on both `authors` and the joined `publishers`; the query
+        // must order by the base table (`authors`) column instead of failing.
+        $authors = query(Author::class)
+            ->select()
+            ->join('LEFT JOIN publishers ON publishers.id = authors.publisher_id')
+            ->orderBy('name')
+            ->all();
+
+        $this->assertSame(
+            ['Alpha Author', 'Beta Author'],
+            array_map(fn (Author $author) => $author->name, $authors),
         );
     }
 

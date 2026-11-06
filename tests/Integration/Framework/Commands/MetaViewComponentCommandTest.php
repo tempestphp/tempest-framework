@@ -61,4 +61,51 @@ final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
                 ],
             JSON);
     }
+
+    #[Test]
+    public function show_variables_declared_in_one_line_docblock(): void
+    {
+        $this->console
+            ->call('meta:view-component x-with-variable')
+            ->assertSuccess()
+            ->assertSee(<<<'JSON'
+                "variables": [
+                    {
+                        "type": "string",
+                        "name": "$variable",
+                        "attributeName": "variable",
+                        "description": null
+                    }
+                ]
+            JSON);
+    }
+
+    #[Test]
+    public function show_description_of_one_line_docblock_variable(): void
+    {
+        $this->console
+            ->call('meta:view-component x-submit')
+            ->assertSuccess()
+            ->assertSee(<<<'JSON'
+                "variables": [
+                    {
+                        "type": "null|string",
+                        "name": "$label",
+                        "attributeName": "label",
+                        "description": "The submit button's label"
+                    }
+                ]
+            JSON);
+    }
+
+    #[Test]
+    public function ignore_one_line_docblock_typing_a_local_assignment(): void
+    {
+        $this->console
+            ->call('meta:view-component x-input')
+            ->assertSuccess()
+            ->assertSee('"name": "$default",')
+            ->assertNotSee('$formSession')
+            ->assertNotSee('$validator');
+    }
 }

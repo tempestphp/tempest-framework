@@ -2,7 +2,61 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.19.2](https://github.com/tempestphp/tempest-framework/compare/v3.19.1..3.19.2)  —  2026-09-08
+## [3.21.0](https://github.com/tempestphp/tempest-framework/compare/v3.20.0..3.21.0)  —  2026-10-29
+
+### 🚨 Breaking changes
+
+- **http**: [**breaking**] regenerate the session identifier on authentication (#2284) ([2f83459](https://github.com/tempestphp/tempest-framework/commit/2f83459d951fec13414b4c4b6d99b94771b17dcc))
+
+### 🚀 Features
+
+- **database**: support creating database configs from a URL (#2315) ([809b73b](https://github.com/tempestphp/tempest-framework/commit/809b73bc10ee72d128be078468b3642cf6f3d1bf))
+
+### ⚡ Performance
+
+- **http**: find expired file sessions by modification time (#2317) ([577f8dc](https://github.com/tempestphp/tempest-framework/commit/577f8dcfe8e7988cc8abcd0960a3ea4b4c519436))
+- improve session handling (#2318) ([1509573](https://github.com/tempestphp/tempest-framework/commit/1509573a2148600c284435dde8761638d30aa2b9))
+
+### 🐛 Bug fixes
+
+- **cryptography**: measure timelock elapsed time with the clock (#2321) ([86b06a9](https://github.com/tempestphp/tempest-framework/commit/86b06a9455206fef95386d07aa7dd2f9a1e1a6a0))
+- **database**: resolve uuid primary keys from positional insert bindings (#2301) ([c68e0ac](https://github.com/tempestphp/tempest-framework/commit/c68e0ac2c31364125c367ffa8ed9f26b0d2b28cd))
+- **database**: declare TModel template on where-builder traits (#2322) ([f759cdc](https://github.com/tempestphp/tempest-framework/commit/f759cdca1da965aa1bae881c4b168e33dc9252e5))
+
+
+## [3.20.0](https://github.com/tempestphp/tempest-framework/compare/v3.19.3..v3.20.0)  —  2026-10-22
+
+### 🚀 Features
+
+- **database**: support unsigned primary keys on MySQL (#2312) ([d4459e0](https://github.com/tempestphp/tempest-framework/commit/d4459e0c205f5f30bbcaf66bdde7650f61c1a6d3))
+
+### 🐛 Bug fixes
+
+- **container**: detect nested circular dependencies (#2297) ([f869ea7](https://github.com/tempestphp/tempest-framework/commit/f869ea70ae16f16db6dc1991a60d5982e6164020))
+
+
+## [3.19.3](https://github.com/tempestphp/tempest-framework/compare/v3.19.2..v3.19.3)  —  2026-10-22
+
+### 🚀 Features
+
+- **container**: add dynamic tags (#2288) ([aea7f2b](https://github.com/tempestphp/tempest-framework/commit/aea7f2b9127f26120cf662a5f78f047f7e639efb))
+
+### ⚡ Performance
+
+- **mapper**: cache per-class reflection plans during hydration (#2276) ([952b707](https://github.com/tempestphp/tempest-framework/commit/952b70770fc64585b7c6557e1d150d5c243f168c))
+
+### 🐛 Bug fixes
+
+- **console**: properly restore terminal after testing (#2294) ([0061698](https://github.com/tempestphp/tempest-framework/commit/006169824ba6ae00edd0d87662f01bc6baddc401))
+- **container**: fix dynamic tag oversights (#2291) ([06addeb](https://github.com/tempestphp/tempest-framework/commit/06addeb3076f995365c5960ea00af4fd596f9155))
+- **database**: don't emit `UNSIGNED` on Postgres (#2295) ([0f478fb](https://github.com/tempestphp/tempest-framework/commit/0f478fb487e12a5891738a15a1663fa44c47295b))
+- **database**: qualify orderBy fields against the base table (#2306) ([c9949b3](https://github.com/tempestphp/tempest-framework/commit/c9949b3dd6c96a656cf7881c130f1988e2ea4a94))
+- **framework**: read one-line docblock vars in meta:view-component (#2299) ([a14c2f3](https://github.com/tempestphp/tempest-framework/commit/a14c2f34ab7d38d5326ed58a0781e942a1d0f970))
+- **mapper**: materialize promoted defaults for readonly properties (#2304) ([05c7376](https://github.com/tempestphp/tempest-framework/commit/05c73765c7f1c65dfa908fd81f71768686105254))
+- dependencies and CI issues (#2314) ([854954b](https://github.com/tempestphp/tempest-framework/commit/854954b40f2fe65d1d1b5f5cd8c893b6c266a0af))
+
+
+## [3.19.2](https://github.com/tempestphp/tempest-framework/compare/v3.19.1..v3.19.2)  —  2026-09-08
 
 ### 🚀 Features
 

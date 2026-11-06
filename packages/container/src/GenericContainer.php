@@ -207,13 +207,15 @@ final class GenericContainer implements Container
      */
     public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
+        $previousChain = $this->chain;
+
         $this->resolveChain();
 
-        $dependency = $this->resolve($className, $tag, ...$params);
-
-        $this->stopChain();
-
-        return $dependency;
+        try {
+            return $this->resolve($className, $tag, ...$params);
+        } finally {
+            $this->stopChain($previousChain);
+        }
     }
 
     public function invoke(ClassReflector|MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed
@@ -250,33 +252,43 @@ final class GenericContainer implements Container
 
     private function invokeClosure(Closure $closure, mixed ...$params): mixed
     {
+        $previousChain = $this->chain;
+
         $this->resolveChain();
 
-        $parameters = $this->autowireDependencies(
-            method: $reflector = new FunctionReflector($closure),
-            parameters: $params,
-        );
-
-        $this->stopChain();
+        try {
+            $parameters = $this->autowireDependencies(
+                method: $reflector = new FunctionReflector($closure),
+                parameters: $params,
+            );
+        } finally {
+            $this->stopChain($previousChain);
+        }
 
         return $reflector->invokeArgs($parameters);
     }
 
     private function invokeMethod(MethodReflector $method, mixed ...$params): mixed
     {
+        $previousChain = $this->chain;
+
         $this->resolveChain();
 
-        $object = $this->get($method->getDeclaringClass()->getName());
+        try {
+            $object = $this->get($method->getDeclaringClass()->getName());
 
-        $parameters = $this->autowireDependencies($method, $params);
-
-        $this->stopChain();
+            $parameters = $this->autowireDependencies($method, $params);
+        } finally {
+            $this->stopChain($previousChain);
+        }
 
         return $method->invokeArgs($object, $parameters);
     }
 
     private function invokeFunction(FunctionReflector|Closure $callback, mixed ...$params): mixed
     {
+        $previousChain = $this->chain;
+
         $this->resolveChain();
 
         $reflector = match (true) {
@@ -284,9 +296,11 @@ final class GenericContainer implements Container
             default => new ReflectionFunction($callback),
         };
 
-        $parameters = $this->autowireDependencies($reflector, $params);
-
-        $this->stopChain();
+        try {
+            $parameters = $this->autowireDependencies($reflector, $params);
+        } finally {
+            $this->stopChain($previousChain);
+        }
 
         return $reflector->invokeArgs($parameters);
     }
@@ -371,20 +385,23 @@ final class GenericContainer implements Container
 
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
-        // Check if a resolved singleton is present
+        // Check if a resolved singleton is present. A singleton is only registered once it is fully
+        // constructed, so it can never be in flight and cannot take part in a cycle.
         if ($instance = $this->resolvedSingletons[$dependencyName] ?? null) {
-            $this->resolveChain()->add($class);
-
             return $instance;
         }
 
         // Check if the class has been registered as a singleton.
         if ($singletonDefinition = $this->singletonDefinitions[$dependencyName] ?? null) {
-            $instance = $singletonDefinition instanceof Closure ? $singletonDefinition($this) : $singletonDefinition;
+            $this->resolveChain()->add($class);
+
+            try {
+                $instance = $singletonDefinition instanceof Closure ? $singletonDefinition($this) : $singletonDefinition;
+            } finally {
+                $this->resolveChain()->pop();
+            }
 
             $this->resolvedSingletons[$dependencyName] = $instance;
-
-            $this->resolveChain()->add($class);
 
             return $instance;
         }
@@ -393,7 +410,11 @@ final class GenericContainer implements Container
         if ($definition = $this->definitions[$dependencyName] ?? null) {
             $this->resolveChain()->add(new FunctionReflector($definition));
 
-            return $definition($this);
+            try {
+                return $definition($this);
+            } finally {
+                $this->resolveChain()->pop();
+            }
         }
 
         // Next we check if any of our default initializers can initialize this class.
@@ -402,10 +423,14 @@ final class GenericContainer implements Container
 
             $this->resolveChain()->add($initializerClass);
 
-            $object = match (true) {
-                $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
-            };
+            try {
+                $object = match (true) {
+                    $initializer instanceof Initializer => $initializer->initialize($this->clone()),
+                    $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
+                };
+            } finally {
+                $this->resolveChain()->pop();
+            }
 
             $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
 
@@ -543,12 +568,16 @@ final class GenericContainer implements Container
 
         // Build the class by iterating through its
         // dependencies and resolving them.
-        foreach ($method->getParameters() as $parameter) {
-            $dependencies[] = $this->clone()->autowireDependency(
-                parameter: $parameter,
-                tag: $parameter->getAttribute(Tag::class)?->name,
-                providedValue: $parameters[$parameter->getName()] ?? null,
-            );
+        try {
+            foreach ($method->getParameters() as $parameter) {
+                $dependencies[] = $this->clone()->autowireDependency(
+                    parameter: $parameter,
+                    tag: $parameter->getAttribute(Tag::class)?->name,
+                    providedValue: $parameters[$parameter->getName()] ?? null,
+                );
+            }
+        } finally {
+            $this->resolveChain()->pop();
         }
 
         return $dependencies;
@@ -679,9 +708,12 @@ final class GenericContainer implements Container
         return $this->chain;
     }
 
-    private function stopChain(): void
+    /**
+     * Restores the parent resolution chain, or resets it to `null` at the top level.
+     */
+    private function stopChain(?DependencyChain $previous = null): void
     {
-        $this->chain = null;
+        $this->chain = $previous;
     }
 
     public function __clone(): void

@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Generated;
+
+use Tempest\CommandBus\CommandBusMiddleware;
+use Tempest\CommandBus\CommandBusMiddlewareCallable;
+use Tempest\Support\Priority;
+
+#[Priority(Priority::NORMAL)]
+final class GeneratedClass implements CommandBusMiddleware
+{
+    public function __invoke(object $command, CommandBusMiddlewareCallable $next): void
+    {
+        $next($command);
+    }
+}

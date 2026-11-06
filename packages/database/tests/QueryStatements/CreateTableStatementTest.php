@@ -240,6 +240,177 @@ final class CreateTableStatementTest extends TestCase
         ];
     }
 
+    #[DataProvider('provide_uuid_fk_create_table_database_dialects')]
+    #[Test]
+    public function create_a_uuid_foreign_key_constraint(DatabaseDialect $dialect, string $validSql): void
+    {
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->belongsToUuid('books.author_id', 'authors.id', OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->foreignUuid('author_id', constrainedOn: 'authors', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->foreignUuid('books.author_id', constrainedOn: 'authors.id', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+    }
+
+    public static function provide_uuid_fk_create_table_database_dialects(): Generator
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` CHAR(36) PRIMARY KEY, 
+                `author_id` CHAR(36) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE "books" (
+                "id" UUID PRIMARY KEY, 
+                "author_id" UUID NOT NULL, 
+                CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                "name" VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` TEXT PRIMARY KEY, 
+                `author_id` TEXT NOT NULL, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+    }
+
+    #[DataProvider('provide_unsigned_fk_create_table_database_drivers')]
+    #[Test]
+    public function create_an_unsigned_foreign_key_constraint(DatabaseDialect $dialect, string $validSql): void
+    {
+        $statement = new CreateTableStatement('books')
+            ->primary(unsigned: true)
+            ->belongsTo('books.author_id', 'authors.id', OnDelete::CASCADE, unsigned: true)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->primary(unsigned: true)
+            ->foreignId('author_id', constrainedOn: 'authors', onDelete: OnDelete::CASCADE, unsigned: true)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+    }
+
+    public static function provide_unsigned_fk_create_table_database_drivers(): Generator
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
+                `author_id` INTEGER UNSIGNED NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE "books" (
+                "id" SERIAL PRIMARY KEY, 
+                "author_id" INTEGER NOT NULL, 
+                CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                "name" VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                `author_id` INTEGER UNSIGNED NOT NULL, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+    }
+
+    #[DataProvider('provide_unsigned_primary_database_dialects')]
+    #[Test]
+    public function create_table_with_unsigned_primary(DatabaseDialect $dialect, string $validSql): void
+    {
+        $statement = new CreateTableStatement('users')
+            ->primary(unsigned: true)
+            ->text('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+    }
+
+    public static function provide_unsigned_primary_database_dialects(): iterable
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `users` (
+                `id` INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
+                `name` TEXT NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE "users" (
+                "id" SERIAL PRIMARY KEY, 
+                "name" TEXT NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `users` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                `name` TEXT NOT NULL
+            );
+            SQL,
+        ];
+    }
+
     #[DataProvider('provide_datetime_current_database_dialects')]
     #[Test]
     public function datetime_current_default(DatabaseDialect $dialect, string $validSql): void

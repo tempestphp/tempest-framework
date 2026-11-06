@@ -9,7 +9,6 @@ use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 use Rector\EarlyReturn\Rector\Return_\ReturnBinaryOrToEarlyReturnRector;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
-use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
 use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
@@ -47,7 +46,6 @@ return RectorConfig::configure()
         ReadOnlyPropertyRector::class,
         AddSensitiveParameterAttributeRector::class,
         RestoreDefaultNullToNullableTypePropertyRector::class,
-        StaticCallOnNonStaticToInstanceCallRector::class,
         EncapsedStringsToSprintfRector::class,
         PrivatizeFinalClassMethodRector::class,
         IssetOnPropertyObjectToPropertyExistsRector::class,

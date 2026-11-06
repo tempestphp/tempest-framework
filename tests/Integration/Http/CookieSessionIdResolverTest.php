@@ -45,6 +45,19 @@ final class CookieSessionIdResolverTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function issue_new_id_replaces_the_cookie(): void
+    {
+        $cookies = $this->container->get(CookieManager::class);
+        $resolver = $this->container->get(CookieSessionIdResolver::class);
+
+        $previousId = (string) $resolver->resolve();
+        $id = (string) $resolver->issueNewId();
+
+        $this->assertNotSame($previousId, $id);
+        $this->assertSame($id, $cookies->get('tempest_session_id')->value);
+    }
+
+    #[Test]
     public function cookie_name(): void
     {
         $this->container->get(AppConfig::class)->name = 'Tempest Cloud';

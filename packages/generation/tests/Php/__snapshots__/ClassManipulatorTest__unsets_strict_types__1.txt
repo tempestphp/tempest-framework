@@ -5,7 +5,7 @@ namespace Tempest\Generation\Tests\Php\Fixtures;
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeCreateTableStatement;
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeMigration;
 use Tempest\Generation\Tests\Php\Fixtures\Database\FakeQueryStatement;
-use Tempest\Generation\Tests\Php\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Php\Fixtures\Database\MigrationModel as Model;
 
 use function Tempest\Database\inspect;
 
@@ -19,7 +19,7 @@ final readonly class CreateMigrationsTable implements FakeMigration
 
     public function up(): FakeQueryStatement
     {
-        return new FakeCreateTableStatement(inspect(MigrationModel::class)->getTableDefinition()->name)
+        return new FakeCreateTableStatement(inspect(Model::class)->getTableDefinition()->name)
             ->primary()
             ->text('name');
     }

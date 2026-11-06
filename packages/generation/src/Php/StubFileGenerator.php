@@ -26,7 +26,7 @@ final class StubFileGenerator
      * @param StubFile $stubFile The stub file to use for the generation. It must be of type CLASS_FILE.
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
+     * @param array<string, ?string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
      *
@@ -46,35 +46,37 @@ final class StubFileGenerator
                 throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, <em>%s</em> given.', $stubFile->type->name));
             }
 
-            if (Filesystem\is_file($targetPath) && ! $shouldOverride) {
+            if (! $shouldOverride && Filesystem\is_file($targetPath)) {
                 throw new FileGenerationWasAborted(sprintf('The file <em>%s</em> already exists and the operation has been aborted.', $targetPath));
             }
 
             $this->prepareFilesystem($targetPath);
 
             // Transform stub to class
-            $namespace = registered_namespace($targetPath);
-            $classname = to_base_class_name($targetPath);
-            $classManipulator = new ClassManipulator($stubFile->filePath)
-                ->setNamespace($namespace)
-                ->setClassName($classname);
+            $code = Filesystem\read_file($stubFile->filePath);
 
             foreach ($replacements as $placeholder => $replacement) {
-                if (! is_string($replacement)) {
+                if ($replacement === null) {
                     continue;
                 }
 
-                $classManipulator->manipulate(fn (ImmutableString $code) => $code->replace($placeholder, $replacement));
+                $code = str_replace($placeholder, $replacement, $code);
             }
+
+            $namespace = registered_namespace($targetPath);
+            $classname = to_base_class_name($targetPath);
+            $classManipulator = new ClassManipulator(PhpFile::fromCode($code))
+                ->setNamespace($namespace)
+                ->setClassName($classname);
 
             // Run all manipulations
             $classManipulator = array_reduce(
                 array: $manipulations,
-                callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
+                callback: static fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
                 initial: $classManipulator,
             );
 
-            if (Filesystem\is_file($targetPath) && $shouldOverride) {
+            if ($shouldOverride && Filesystem\is_file($targetPath)) {
                 Filesystem\delete_file($targetPath);
             }
 
@@ -88,7 +90,7 @@ final class StubFileGenerator
      * @param StubFile $stubFile The stub file to use for the generation. It must be of type RAW_FILE.
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
+     * @param array<string, ?string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'dummy-content')
      *     The values are the replacements for the placeholders (e.g. 'real content')
      *
@@ -108,7 +110,7 @@ final class StubFileGenerator
                 throw new FileGenerationFailedException(sprintf('The stub file must be of type RAW_FILE, "%s" given.', $stubFile->type->name));
             }
 
-            if (Filesystem\is_file($targetPath) && ! $shouldOverride) {
+            if (! $shouldOverride && Filesystem\is_file($targetPath)) {
                 throw new FileGenerationWasAborted(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
             }
 
@@ -116,7 +118,7 @@ final class StubFileGenerator
             $fileContent = Filesystem\read_file($stubFile->filePath);
 
             foreach ($replacements as $placeholder => $replacement) {
-                if (! is_string($replacement)) {
+                if ($replacement === null) {
                     continue;
                 }
 
@@ -126,11 +128,11 @@ final class StubFileGenerator
             // Run all manipulations
             $fileContent = array_reduce(
                 array: $manipulations,
-                callback: fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
+                callback: static fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
                 initial: $fileContent,
             );
 
-            if (Filesystem\is_file($targetPath) && $shouldOverride) {
+            if ($shouldOverride && Filesystem\is_file($targetPath)) {
                 Filesystem\delete_file($targetPath);
             }
 
@@ -148,10 +150,6 @@ final class StubFileGenerator
      */
     private function prepareFilesystem(string $targetPath): void
     {
-        // Recursively create directories before writing the file
-        $directory = dirname($targetPath);
-        if (! is_dir($directory)) {
-            mkdir($directory, recursive: true);
-        }
+        Filesystem\create_directory_for_file($targetPath);
     }
 }

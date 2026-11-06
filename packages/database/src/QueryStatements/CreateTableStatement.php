@@ -37,13 +37,14 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
      *
      * By default, MySQL and SQLite use an auto-incrementing `INTEGER` column, and PostgreSQL uses `SERIAL`.
      * When setting `uuid` to `true`, MySQL will use `VARCHAR(36)`, PostgreSQL will use `UUID`, and SQLite will use `TEXT`.
+     * When setting `unsigned` to `true`, MySQL will use `INTEGER UNSIGNED`. This has no effect on PostgreSQL and SQLite, or when `uuid` is `true`.
      */
-    public function primary(string $name = 'id', bool $uuid = false): self
+    public function primary(string $name = 'id', bool $uuid = false, bool $unsigned = false): self
     {
         if ($uuid) {
             $this->uuid($name);
         } else {
-            $this->statements[] = new PrimaryKeyStatement($name);
+            $this->statements[] = new PrimaryKeyStatement($name, $unsigned);
         }
 
         return $this;
@@ -69,12 +70,19 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
      *
      * @param string $local The local column in the format `this_table.foreign_id`.
      * @param string $foreign The foreign column in the format `other_table.id`.
+     * @param bool $unsigned Whether the local column is unsigned. Must match the referenced primary key on MySQL.
      */
-    public function belongsTo(string $local, string $foreign, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION, bool $nullable = false): self
-    {
+    public function belongsTo(
+        string $local,
+        string $foreign,
+        OnDelete $onDelete = OnDelete::RESTRICT,
+        OnUpdate $onUpdate = OnUpdate::NO_ACTION,
+        bool $nullable = false,
+        bool $unsigned = false,
+    ): self {
         [, $localKey] = explode('.', $local);
 
-        $this->integer($localKey, nullable: $nullable);
+        $this->integer($localKey, unsigned: $unsigned, nullable: $nullable);
 
         $this->statements[] = new BelongsToStatement(
             local: $local,
@@ -101,9 +109,16 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
      *
      * @param string $local The local column in the format `[this_table.]foreign_id`.
      * @param string $constrainedOn The foreign table in the format `other_table[.id]`.
+     * @param bool $unsigned Whether the local column is unsigned. Must match the referenced primary key on MySQL.
      */
-    public function foreignId(string $local, string $constrainedOn, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION, bool $nullable = false): self
-    {
+    public function foreignId(
+        string $local,
+        string $constrainedOn,
+        OnDelete $onDelete = OnDelete::RESTRICT,
+        OnUpdate $onUpdate = OnUpdate::NO_ACTION,
+        bool $nullable = false,
+        bool $unsigned = false,
+    ): self {
         if (! str_contains($local, '.')) {
             $local = $this->tableName . '.' . $local;
         }
@@ -112,7 +127,68 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
             $constrainedOn .= '.id';
         }
 
-        return $this->belongsTo($local, $constrainedOn, $onDelete, $onUpdate, $nullable);
+        return $this->belongsTo($local, $constrainedOn, $onDelete, $onUpdate, $nullable, $unsigned);
+    }
+
+    /**
+     * Adds a UUID column with a foreign key relationship to another table. This is an alias to `foreignUuid`.
+     *
+     * **Example**
+     * ```php
+     * $table->belongsToUuid('orders.customer_uuid', 'customers.uuid');
+     * ```
+     *
+     * @param string $local The local column in the format `this_table.foreign_uuid`.
+     * @param string $foreign The foreign column in the format `other_table.uuid`.
+     */
+    public function belongsToUuid(string $local, string $foreign, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION, bool $nullable = false): self
+    {
+        [, $localKey] = explode('.', $local);
+
+        $this->statements[] = new UuidStatement($localKey, nullable: $nullable);
+
+        $this->statements[] = new BelongsToStatement(
+            local: $local,
+            foreign: $foreign,
+            onDelete: $onDelete,
+            onUpdate: $onUpdate,
+        );
+
+        return $this;
+    }
+
+    /**
+     * Adds a UUID column with a foreign key relationship to another table.
+     *
+     * **Example**
+     * ```php
+     * new CreateTableStatement('orders')
+     *   ->foreignUuid('customer_uuid', constrainedOn: 'customers');
+     * ```
+     * ```php
+     * new CreateTableStatement('orders')
+     *   ->foreignUuid('orders.customer_uuid', constrainedOn: 'customers.uuid');
+     * ```
+     *
+     * @param string $local The local column in the format `[this_table.]foreign_uuid`.
+     * @param string $constrainedOn The foreign table in the format `other_table[.uuid]`.
+     */
+    public function foreignUuid(
+        string $local,
+        string $constrainedOn,
+        OnDelete $onDelete = OnDelete::RESTRICT,
+        OnUpdate $onUpdate = OnUpdate::NO_ACTION,
+        bool $nullable = false,
+    ): self {
+        if (! str_contains($local, '.')) {
+            $local = $this->tableName . '.' . $local;
+        }
+
+        if (! str_contains($constrainedOn, '.')) {
+            $constrainedOn .= '.id';
+        }
+
+        return $this->belongsToUuid($local, $constrainedOn, $onDelete, $onUpdate, $nullable);
     }
 
     /**

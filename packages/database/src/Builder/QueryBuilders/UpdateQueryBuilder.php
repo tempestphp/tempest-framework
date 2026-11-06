@@ -44,7 +44,10 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions;
     use OnDatabase;
+
+    /** @use HasWhereQueryBuilderMethods<TModel> */
     use HasWhereQueryBuilderMethods;
+
     use TransformsQueryBuilder;
 
     private UpdateStatement $update;

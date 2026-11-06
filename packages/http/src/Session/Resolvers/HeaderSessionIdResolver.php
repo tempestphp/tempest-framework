@@ -35,4 +35,9 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
             id: $this->request->headers[$sessionKey] ?? Uuid::v4()->toString(),
         );
     }
+
+    public function issueNewId(): SessionId
+    {
+        return new SessionId(id: Uuid::v4()->toString());
+    }
 }

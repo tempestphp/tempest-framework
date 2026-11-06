@@ -16,6 +16,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
@@ -52,6 +53,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(FileSessionConfig::class),
+            $this->container->get(SessionIdResolver::class),
         ));
     }
 
@@ -155,6 +157,26 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function regenerate_replaces_the_session_file(): void
+    {
+        $this->session->set('key', 'value');
+        $this->manager->save($this->session);
+
+        $previousPath = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+        $previousId = (string) $this->session->id;
+
+        $this->manager->regenerate($this->session);
+
+        $this->assertNotSame($previousId, (string) $this->session->id);
+        $this->assertFileDoesNotExist($previousPath);
+
+        $path = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+
+        $this->assertFileExists($path);
+        $this->assertSame('value', $this->session->get('key'));
+    }
+
+    #[Test]
     public function is_valid_checks_expiration(): void
     {
         $clock = $this->clock('2025-01-01 00:00:00');
@@ -190,16 +212,16 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         ));
 
         $active = $this->manager->getOrCreate(new SessionId('active'));
-        $this->manager->save($active);
+        $this->saveAtClockTime($active, 'test_sessions');
 
         $expired = $this->manager->getOrCreate(new SessionId('expired'));
-        $this->manager->save($expired);
+        $this->saveAtClockTime($expired, 'test_sessions');
 
         // we expire the $expired one
         $clock->plus(Duration::minutes(35));
 
         // keep active session fresh
-        $this->manager->save($active);
+        $this->saveAtClockTime($active, 'test_sessions');
 
         $activePath = Path\normalize($this->path, 'test_sessions', (string) $active->id);
         $expiredPath = Path\normalize($this->path, 'test_sessions', (string) $expired->id);
@@ -218,6 +240,95 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
                 $this->assertEquals($expired->id, $event->id);
             },
             count: 1,
+        );
+    }
+
+    #[Test]
+    public function delete_expired_sessions_removes_unreadable_files(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $clock = $this->clock('2023-01-01 00:00:00');
+
+        $this->container->config(new FileSessionConfig(
+            expiration: Duration::minutes(30),
+            path: 'test_sessions',
+        ));
+
+        $corruptPath = Path\normalize($this->path, 'test_sessions', 'corrupt');
+        Filesystem\write_file($corruptPath, 'not a serialized session');
+        touch($corruptPath, $clock->now()->getTimestamp()->getSeconds());
+
+        $clock->plus(Duration::minutes(35));
+
+        $this->manager->deleteExpiredSessions();
+
+        $this->assertFileDoesNotExist($corruptPath);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event): void {
+                $this->assertEquals(new SessionId('corrupt'), $event->id);
+            },
+            count: 1,
+        );
+    }
+
+    #[Test]
+    public function unchanged_session_is_not_rewritten(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+        $id = new SessionId('unchanged');
+        $path = Path\normalize($this->path, 'sessions', (string) $id);
+
+        $session = $this->manager->getOrCreate($id);
+        $session->set('user', 'brent');
+
+        $this->manager->save($session);
+
+        $unchanged = $this->manager->getOrCreate($id);
+
+        // Another request writes to the same session in the meantime
+        $concurrent = $this->manager->getOrCreate($id);
+        $concurrent->set('cart', 'book');
+
+        $this->manager->save($concurrent);
+
+        $clock->plus(Duration::minutes(5));
+        $this->manager->save($unchanged);
+
+        clearstatcache();
+
+        $this->assertSame('book', $this->manager->getOrCreate($id)->get('cart'));
+        $this->assertSame($clock->now()->getTimestamp()->getSeconds(), filemtime($path));
+    }
+
+    #[Test]
+    public function last_active_at_is_read_from_modification_time(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+        $id = new SessionId('active');
+
+        $session = $this->manager->getOrCreate($id);
+        $session->set('user', 'brent');
+
+        $this->manager->save($session);
+
+        $clock->plus(Duration::minutes(5));
+        $this->manager->save($this->manager->getOrCreate($id));
+
+        clearstatcache();
+
+        $this->assertTrue($this->manager->getOrCreate($id)->lastActiveAt->equals($clock->now()));
+    }
+
+    private function saveAtClockTime(Session $session, string $path): void
+    {
+        $this->manager->save($session);
+
+        touch(
+            Path\normalize($this->path, $path, (string) $session->id),
+            $session->lastActiveAt->getTimestamp()->getSeconds(),
         );
     }
 }

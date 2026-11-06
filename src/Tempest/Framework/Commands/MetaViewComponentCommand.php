@@ -6,7 +6,6 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Support\Arr\ImmutableArray;
-use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
@@ -81,11 +80,17 @@ final readonly class MetaViewComponentCommand
     private function resolveVariables(ViewComponent $viewComponent): ImmutableArray
     {
         return str($viewComponent->contents)
-            ->matchAll('/^\s*\*\s*@var.*$/m')
-            ->map(fn (array $matches) => str($matches[0]))
-            ->map(fn (ImmutableString $line) => $line->replaceRegex('/^\s*\*\s*@var\s*/', ''))
-            ->map(fn (ImmutableString $line) => $line->trim())
-            ->map(fn (ImmutableString $line) => $line->explode(limit: 3))
+            ->matchAll(
+                pattern: '/(?:^\s*\*|\/\*\*)[ \t]*@var[ \t]+(?<declaration>[^\r\n]*?)[ \t]*(?:\*\/(?:\s*(?<assignee>\$\w+)\s*=(?!=))?|\r?$)/m',
+                matches: ['declaration', 'assignee'],
+            )
+            ->map(fn (array $matches) => [
+                'parts' => str($matches['declaration'])->explode(limit: 3),
+                'assignee' => $matches['assignee'] ?? null,
+            ])
+            // A one-line `@var` right before an assignment types a local variable, not an attribute.
+            ->filter(fn (array $match) => $match['assignee'] === null || $match['assignee'] !== ($match['parts'][1] ?? null))
+            ->map(fn (array $match) => $match['parts'])
             ->mapWithKeys(
                 fn (ImmutableArray $parts) => yield $parts[1] => [
                     'type' => $parts[0],

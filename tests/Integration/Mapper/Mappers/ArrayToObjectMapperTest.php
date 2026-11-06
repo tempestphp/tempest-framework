@@ -18,6 +18,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPromotedDefaults;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObjectWithGetterChild;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObjectWithVirtualChild;
@@ -70,6 +71,18 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('a', $object->a);
         $this->assertNull($object->b);
+    }
+
+    #[Test]
+    public function map_promoted_defaults_without_running_constructor(): void
+    {
+        ObjectWithPromotedDefaults::$constructorCalls = 0;
+
+        $object = map(['name' => 'given'])->to(ObjectWithPromotedDefaults::class);
+
+        $this->assertSame('given', $object->name);
+        $this->assertSame(5, $object->count);
+        $this->assertSame(0, ObjectWithPromotedDefaults::$constructorCalls);
     }
 
     #[Test]

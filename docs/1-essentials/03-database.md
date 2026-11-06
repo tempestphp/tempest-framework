@@ -36,6 +36,40 @@ return new PostgresConfig(
 );
 ```
 
+### Connecting with a connection string
+
+Some hosting providers, such as Laravel Cloud, inject the connection details as a single `DATABASE_URL` environment variable. Each configuration class provides a `fromConnectionString()` method that builds the configuration from such a connection string:
+
+```php app/Config/database.config.php
+use Tempest\Database\Config\MysqlConfig;
+use function Tempest\env;
+
+return MysqlConfig::fromConnectionString(env('DATABASE_URL'));
+```
+
+Components missing from the connection string fall back to their defaults. Any other constructor argument may be passed by name, and takes precedence over the values parsed from the connection string:
+
+```php app/Config/database.config.php
+return PostgresConfig::fromConnectionString(env('DATABASE_URL'), persistent: true);
+```
+
+Query parameters are appended to the DSN, which allows passing driver-specific options such as `sslmode` or `connect_timeout`:
+
+```
+postgres://user:secret@db.example.com:5432/app?sslmode=require&connect_timeout=10
+```
+
+To connect through a Unix socket, pass its path as a percent-encoded host, or as the `host` query parameter for PostgreSQL and the `unix_socket` query parameter for MySQL:
+
+```
+postgres://user:secret@%2Fvar%2Frun%2Fpostgresql/app
+mysql://user:secret@localhost/app?unix_socket=/var/run/mysqld/mysqld.sock
+```
+
+{b`Tempest\Database\Config\MysqlConfig`} accepts the `mysql` and `mariadb` schemes, {b`Tempest\Database\Config\PostgresConfig`} accepts `postgres`, `postgresql` and `pgsql`, and {b`Tempest\Database\Config\SQLiteConfig`} accepts connection strings such as `sqlite:///path/to/database.sqlite` and `sqlite::memory:`. Credentials containing special characters must be percent-encoded.
+
+The parsed components are also available through the {b`Tempest\Database\Config\DatabaseConnectionString`} value object, using `DatabaseConnectionString::from()`.
+
 ## Querying the database
 
 Multiple approaches exist for querying the database, all of which execute a {b`Tempest\Database\Query`} on the {b`Tempest\Database\Database`} class. The most straightforward approach is to inject {b`Tempest\Database\Database`}:
@@ -406,8 +440,59 @@ final class CreateBooksTable implements MigratesUp
 }
 ```
 
+Columns referencing a UUID primary key need a UUID-compatible type. Use `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
+
+```php app/Books/CreateChaptersTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\OnDelete;
+
+final class CreateChaptersTable implements MigratesUp
+{
+    public string $name = '2024-08-13_create_chapters_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('chapters')
+            ->uuid()
+            ->text('title')
+            ->foreignUuid('book_uuid', constrainedOn: 'books.uuid', onDelete: OnDelete::CASCADE);
+    }
+}
+```
+
+UUID columns use `CHAR(36)` on MySQL, `UUID` on PostgreSQL, and `TEXT` on SQLite, so foreign keys referencing UUID primary keys are type-compatible on every supported dialect.
+
 :::warning
 Currently, the [`IsDatabaseModel`](#the-is-database-model-trait) trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
+:::
+
+### Using unsigned integers as primary keys
+
+By default, Tempest uses signed auto-incrementing integers as primary keys. On MySQL, you may use unsigned integers instead by specifying `unsigned: true` to the `primary()` method. Foreign keys referencing an unsigned primary key must be unsigned as well, so specify `unsigned: true` to `belongsTo()` or `foreignId()` too:
+
+```php app/Books/CreateBooksTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+
+final class CreateBooksTable implements MigratesUp
+{
+    public string $name = '2024-08-12_create_books_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('books')
+            ->primary(unsigned: true)
+            ->foreignId('author_id', constrainedOn: 'authors', unsigned: true)
+            ->text('title');
+    }
+}
+```
+
+:::info
+PostgreSQL and SQLite have no unsigned integer type, so this option has no effect on primary keys for those databases.
 :::
 
 ### Table names
