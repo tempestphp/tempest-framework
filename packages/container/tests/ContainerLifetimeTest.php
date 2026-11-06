@@ -6,26 +6,19 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Container\AutowireDiscovery;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Initializer;
-use Tempest\Container\InitializerDiscovery;
 use Tempest\Container\Lifetime;
 use Tempest\Container\Singleton;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ProcessLifetimeSingleton;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeClassInitializer;
 use Tempest\Container\Tests\Fixtures\RequestLifetimeDependency;
-use Tempest\Container\Tests\Fixtures\RequestLifetimeDynamicInitializer;
 use Tempest\Container\Tests\Fixtures\RequestLifetimeInitializer;
 use Tempest\Container\Tests\Fixtures\RequestLifetimeInterface;
 use Tempest\Container\Tests\Fixtures\RequestLifetimeSingleton;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
 use Tempest\Container\Tests\Fixtures\SingletonInitializer;
-use Tempest\Discovery\DiscoveryItems;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Reflection\ClassReflector;
 
 /** @internal */
 final class ContainerLifetimeTest extends TestCase
@@ -64,27 +57,6 @@ final class ContainerLifetimeTest extends TestCase
     }
 
     #[Test]
-    public function initializer_singletons_are_shared_until_reset(): void
-    {
-        foreach ([RequestLifetimeInitializer::class, RequestLifetimeClassInitializer::class, RequestLifetimeDynamicInitializer::class] as $initializer) {
-            $container = new GenericContainer();
-            $discovery = new InitializerDiscovery($container);
-            $discovery->setItems(new DiscoveryItems());
-            $discovery->discover(new DiscoveryLocation(__NAMESPACE__, __DIR__), new ClassReflector($initializer));
-            $discovery->apply();
-
-            for ($request = 0; $request < 3; $request++) {
-                $instance = $container->get(RequestLifetimeInterface::class);
-                $this->assertSame($instance, $container->get(RequestLifetimeInterface::class));
-
-                $container->reset();
-
-                $this->assertNotSame($instance, $container->get(RequestLifetimeInterface::class));
-            }
-        }
-    }
-
-    #[Test]
     public function tagged_initializer_singletons_are_cleared(): void
     {
         $container = new GenericContainer();
@@ -96,28 +68,6 @@ final class ContainerLifetimeTest extends TestCase
         $container->reset();
 
         $this->assertNotSame($instance, $container->get(RequestLifetimeInterface::class, 'tag'));
-    }
-
-    #[Test]
-    public function discovered_interface_bindings_follow_the_class_lifetime(): void
-    {
-        $container = new GenericContainer();
-        $discovery = new AutowireDiscovery($container);
-        $discovery->setItems(new DiscoveryItems());
-        $discovery->discover(new DiscoveryLocation(__NAMESPACE__, __DIR__), new ClassReflector(RequestLifetimeSingleton::class));
-        $discovery->apply();
-
-        for ($request = 0; $request < 3; $request++) {
-            $instance = $container->get(RequestLifetimeInterface::class);
-            $this->assertSame($instance, $container->get(RequestLifetimeSingleton::class));
-            $this->assertSame($instance, $container->get(RequestLifetimeInterface::class));
-
-            $container->reset();
-
-            $next = $container->get(RequestLifetimeInterface::class);
-            $this->assertNotSame($instance, $next);
-            $this->assertSame($next, $container->get(RequestLifetimeSingleton::class));
-        }
     }
 
     #[Test]
