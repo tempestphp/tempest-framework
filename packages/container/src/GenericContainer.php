@@ -393,7 +393,7 @@ final class GenericContainer implements Container
 
         // Check if the class has been registered as a singleton.
         if ($singletonDefinition = $this->singletonDefinitions[$dependencyName] ?? null) {
-            $this->resolveChain()->add($class);
+            $this->resolveChain()->add($dependencyName);
 
             try {
                 $instance = $singletonDefinition instanceof Closure ? $singletonDefinition($this) : $singletonDefinition;
@@ -408,7 +408,7 @@ final class GenericContainer implements Container
 
         // Check if a callable has been registered to resolve this class.
         if ($definition = $this->definitions[$dependencyName] ?? null) {
-            $this->resolveChain()->add(new FunctionReflector($definition));
+            $this->resolveChain()->add($dependencyName);
 
             try {
                 return $definition($this);
