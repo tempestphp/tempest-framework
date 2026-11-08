@@ -312,6 +312,46 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
+    public function tagged_singleton_can_depend_on_unresolved_default_singleton(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(TaggedDependency::class, fn () => new TaggedDependency('default'));
+        $container->singleton(
+            TaggedDependency::class,
+            fn (GenericContainer $container) => clone $container->get(TaggedDependency::class),
+            tag: 'copy',
+        );
+
+        $tagged = $container->get(TaggedDependency::class, tag: 'copy');
+        $default = $container->get(TaggedDependency::class);
+
+        $this->assertSame('default', $tagged->name);
+        $this->assertNotSame($default, $tagged);
+        $this->assertSame($default, $container->get(TaggedDependency::class));
+        $this->assertSame($tagged, $container->get(TaggedDependency::class, tag: 'copy'));
+    }
+
+    #[Test]
+    public function registered_factories_can_share_a_source_location(): void
+    {
+        $wrap = fn (callable $factory) => fn (GenericContainer $container) => $factory($container);
+
+        $container = new GenericContainer();
+        $container->register(
+            ContainerObjectB::class,
+            $wrap(fn (GenericContainer $container) => new ContainerObjectB($container->get(ContainerObjectA::class))),
+        );
+        $container->register(ContainerObjectA::class, $wrap(fn () => new ContainerObjectA()));
+
+        $first = $container->get(ContainerObjectB::class);
+        $second = $container->get(ContainerObjectB::class);
+
+        $this->assertInstanceOf(ContainerObjectA::class, $first->a);
+        $this->assertNotSame($first, $second);
+        $this->assertNotSame($first->a, $second->a);
+    }
+
+    #[Test]
     public function tagged_singleton_with_enum(): void
     {
         $container = new GenericContainer();
