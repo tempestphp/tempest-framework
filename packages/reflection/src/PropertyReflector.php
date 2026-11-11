@@ -97,19 +97,72 @@ final readonly class PropertyReflector implements Reflector, Stringable
     {
         $doc = $this->reflectionProperty->getDocComment();
 
-        if (! $doc) {
+        if ($doc === false) {
             return null;
         }
 
+        /** @var array<class-string, array<string, string|null>> $types */
+        static $types = [];
+
+        $class = $this->reflectionProperty->getDeclaringClass()->getName();
+        $property = $this->reflectionProperty->getName();
+
+        if (! array_key_exists($property, $types[$class] ?? [])) {
+            $types[$class][$property] = $this->resolveIterableTypeName($doc);
+        }
+
+        $name = $types[$class][$property];
+
+        return $name === null ? null : new TypeReflector($name);
+    }
+
+    private function resolveIterableTypeName(string $doc): ?string
+    {
         if (preg_match('/@var\s+([\\\\\w]+)\[\]/', $doc, $match)) {
-            return new TypeReflector(ltrim($match[1], '\\'));
+            return $this->resolveDocblockClassName($match[1]);
         }
 
         if (preg_match('/@var\s+(?:list|array)<([\\\\\w]+)>/', $doc, $match)) {
-            return new TypeReflector(ltrim($match[1], '\\'));
+            return $this->resolveDocblockClassName($match[1]);
         }
 
         return null;
+    }
+
+    private function resolveDocblockClassName(string $name): string
+    {
+        if (in_array(
+            $name,
+            ['array', 'bool', 'callable', 'false', 'float', 'int', 'iterable', 'mixed', 'never', 'null', 'object', 'resource', 'string', 'true', 'void'],
+            strict: true,
+        )) {
+            return $name;
+        }
+
+        if (str_starts_with($name, '\\')) {
+            return ltrim($name, '\\');
+        }
+
+        $segments = explode('\\', $name);
+        $firstSegment = strtolower($segments[0]);
+        $context = DocblockContext::forProperty($this->reflectionProperty);
+        $aliases = $context['aliases'];
+
+        if ($firstSegment === 'namespace') {
+            $name = implode('\\', array_slice($segments, 1));
+        }
+
+        if ($firstSegment !== 'namespace' && isset($aliases[$firstSegment])) {
+            return implode('\\', [$aliases[$firstSegment], ...array_slice($segments, 1)]);
+        }
+
+        $namespace = $context['namespace'];
+
+        if ($namespace === '') {
+            return $name;
+        }
+
+        return $namespace . '\\' . $name;
     }
 
     public function isUninitialized(object $object): bool
