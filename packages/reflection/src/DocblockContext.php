@@ -43,25 +43,67 @@ final class DocblockContext
         $key = $class->isAnonymous() ? '@' . $class->getStartLine() : $class->getName();
 
         if ($file !== false) {
-            $files[$file] ??= self::parseFile($file);
+            if (! isset($files[$file][$key])) {
+                $source = @file_get_contents($file);
 
-            if (isset($files[$file][$key])) {
-                return $files[$file][$key];
+                if ($source !== false) {
+                    $context = self::parseHeader($source, $class);
+
+                    if ($context === null) {
+                        $files[$file] = self::parseSource($source);
+                    } else {
+                        $files[$file][$key] = $context;
+                    }
+                }
+
+                $files[$file][$key] ??= ['namespace' => $class->getNamespaceName(), 'aliases' => [], 'properties' => []];
             }
+
+            return $files[$file][$key];
         }
 
         return ['namespace' => $class->getNamespaceName(), 'aliases' => [], 'properties' => []];
     }
 
-    /** @return array<string, array{namespace: string, aliases: array<string, string>, properties: array<string, true>}> */
-    private static function parseFile(string $file): array
+    /**
+     * @param ReflectionClass<object> $class
+     * @return array{namespace: string, aliases: array<string, string>, properties: array<string, true>}|null
+     */
+    private static function parseHeader(string $source, ReflectionClass $class): ?array
     {
-        $source = @file_get_contents($file);
-
-        if ($source === false) {
-            return [];
+        // Only a complete simple header can bypass tokenization; comments and other PHP syntax fall back.
+        if ($class->isAnonymous() || preg_match(<<<'REGEX'
+        ~\A<\?php\s+
+        (?:declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;\s*)?
+        (?:namespace\s+(?<namespace>[\w\x5c]+)\s*;\s*)?
+        (?<imports>(?:use\s+[\w\x5c]+(?:\s+as\s+\w+)?\s*;\s*)*)
+        (?:(?:final|abstract|readonly)\s+)*class\s+(?<class>\w+)\b
+        ~ix
+        REGEX, $source, $match) !== 1) {
+            return null;
         }
 
+        $namespace = $match['namespace'];
+
+        if (ltrim($namespace . '\\' . $match['class'], '\\') !== $class->getName() || $class->getTraits() !== []) {
+            return null;
+        }
+
+        preg_match_all('/use\s+([\w\x5c]+)(?:\s+as\s+(\w+))?\s*;/i', $match['imports'], $imports, PREG_SET_ORDER);
+        $aliases = [];
+
+        foreach ($imports as $import) {
+            $name = ltrim($import[1], '\\');
+            $alias = $import[2] ?? substr(strrchr('\\' . $name, '\\'), 1);
+            $aliases[strtolower($alias)] = $name;
+        }
+
+        return ['namespace' => $namespace, 'aliases' => $aliases, 'properties' => []];
+    }
+
+    /** @return array<string, array{namespace: string, aliases: array<string, string>, properties: array<string, true>}> */
+    private static function parseSource(string $source): array
+    {
         $tokens = array_values(array_filter(PhpToken::tokenize($source), fn (PhpToken $token) => ! $token->isIgnorable()));
         $contexts = [];
         $namespace = '';
