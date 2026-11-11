@@ -4,156 +4,178 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Benchmark\Reflection;
 
+use Generator;
 use PhpBench\Attributes\AfterMethods;
 use PhpBench\Attributes\BeforeMethods;
 use PhpBench\Attributes\Iterations;
+use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use ReflectionClass;
-use ReflectionProperty;
+use PHPUnit\Framework\Assert;
+use RuntimeException;
 use Tempest\Reflection\PropertyReflector;
 use Tests\Tempest\Benchmark\Reflection\Fixtures\Book;
 use Tests\Tempest\Benchmark\Reflection\Fixtures\Fqcn\FqcnModels;
 use Tests\Tempest\Benchmark\Reflection\Fixtures\Plain\PlainModels;
 use Tests\Tempest\Benchmark\Reflection\Fixtures\Short\ShortNameModels;
+use Throwable;
 
+#[Iterations(20)]
 final class PropertyReflectorBench
 {
-    /** @var PropertyReflector[] */
-    private array $shortNameReflectors;
+    private const int COLD_REVS = 20;
 
-    /** @var PropertyReflector[] */
-    private array $fqcnReflectors;
+    private PropertyReflector $reflector;
 
-    /** @var PropertyReflector[] */
-    private array $builtinReflectors;
+    private ?string $expectedType;
 
-    /** @var array<int, string> */
+    /** @var list<PropertyReflector> */
+    private array $coldReflectors = [];
+
+    /** @var list<string> */
     private array $coldFiles = [];
 
-    public function setUp(): void
+    private int $coldIndex = 0;
+
+    /** @param array{class: class-string, property: string, type: string|null} $params */
+    public function setUpWarm(array $params): void
     {
-        $this->shortNameReflectors = $this->collectReflectors(ShortNameModels::class);
-        $this->fqcnReflectors = $this->collectReflectors(FqcnModels::class);
-        $this->builtinReflectors = $this->collectReflectors(PlainModels::class);
+        $this->reflector = PropertyReflector::fromParts($params['class'], $params['property']);
+        $this->expectedType = $params['type'];
     }
 
-    #[BeforeMethods('setUp')]
-    #[Iterations(20)]
+    #[BeforeMethods('setUpWarm')]
+    #[AfterMethods('assertWarmType')]
+    #[ParamProviders('warmSources')]
     #[Revs(50_000)]
     #[Warmup(5_000)]
-    public function benchShortNameDocblocks(): void
+    public function benchWarmLookup(): void
     {
-        foreach ($this->shortNameReflectors as $reflector) {
-            $reflector->getIterableType();
-        }
+        $this->reflector->getIterableType();
     }
 
-    #[BeforeMethods('setUp')]
-    #[Iterations(20)]
-    #[Revs(50_000)]
-    #[Warmup(5_000)]
-    public function benchFqcnDocblocks(): void
+    /** @return Generator<string, array{class: class-string, property: string, type: string|null}> */
+    public function warmSources(): Generator
     {
-        foreach ($this->fqcnReflectors as $reflector) {
-            $reflector->getIterableType();
-        }
+        yield 'short-name' => ['class' => ShortNameModels::class, 'property' => 'one', 'type' => Book::class];
+        yield 'fqcn' => ['class' => FqcnModels::class, 'property' => 'one', 'type' => Book::class];
+        yield 'int[]' => ['class' => PlainModels::class, 'property' => 'integers', 'type' => 'int'];
+        yield 'list<string>' => ['class' => PlainModels::class, 'property' => 'strings', 'type' => 'string'];
+        yield 'no-docblock' => ['class' => PlainModels::class, 'property' => 'noDocblock', 'type' => null];
     }
 
-    #[BeforeMethods('setUp')]
-    #[Iterations(20)]
-    #[Revs(50_000)]
-    #[Warmup(5_000)]
-    public function benchBuiltinTypeDocblocks(): void
+    public function assertWarmType(): void
     {
-        foreach ($this->builtinReflectors as $reflector) {
-            $reflector->getIterableType();
-        }
+        Assert::assertSame($this->expectedType, $this->reflector->getIterableType()?->getName());
     }
 
-    /**
-     * Measures the uncached parse path. Stream wrappers avoid tmp-file IO:
-     * the source is served from memory via a unique `parse-bench://` wrapper.
-     */
-    #[BeforeMethods('setUpCold')]
+    // Cold means uncached source metadata, not an empty OS filesystem cache.
+    #[BeforeMethods('setUpFirstLookup')]
     #[AfterMethods('tearDownCold')]
-    #[Iterations(20)]
-    #[Revs(20)]
-    public function benchColdParse(): void
+    #[ParamProviders('firstLookupSources')]
+    #[Revs(self::COLD_REVS)]
+    #[Warmup(0)]
+    public function benchFirstLookup(): void
     {
-        static $index = 0;
-
-        $index++;
-
-        $reflector = new PropertyReflector(new ReflectionProperty("TempestParseBench{$index}\\BooksHolder", 'books'));
-        $reflector->getIterableType();
-
-        // Prepare a fresh source for the next rev.
-        $this->materializeColdFile($index + 1);
+        $this->coldReflectors[$this->coldIndex++]->getIterableType();
     }
 
-    public function setUpCold(): void
+    /** @return Generator<string, array{extraProperties: int, sourceCached: bool}> */
+    public function firstLookupSources(): Generator
     {
-        // Rev n must hit a fresh file, and the class must already exist for
-        // ReflectionProperty — so the file for rev n+1 is materialized during
-        // rev n (and the first two here).
-        for ($i = 1; $i <= 20; $i++) {
-            $this->coldFiles[$i] = ColdParseStreamWrapper::pathFor('tempest-parse-bench-' . bin2hex(random_bytes(8)) . '.php');
-        }
-
-        $this->materializeColdFile(1);
-        $this->materializeColdFile(2);
+        yield 'cold-small' => ['extraProperties' => 0, 'sourceCached' => false];
+        yield 'cold-100-properties' => ['extraProperties' => 100, 'sourceCached' => false];
+        yield 'cached-source' => ['extraProperties' => 0, 'sourceCached' => true];
     }
 
-    private function materializeColdFile(int $index): void
+    /** @param array{extraProperties: int, sourceCached: bool} $params */
+    public function setUpFirstLookup(array $params): void
     {
-        $file = $this->coldFiles[$index] ?? null;
+        // Load resolver dependencies without touching any of the measured source files.
+        PropertyReflector::fromParts(ShortNameModels::class, 'one')->getIterableType();
+        $run = 'TempestParseBench' . bin2hex(random_bytes(8));
 
-        if ($file === null) {
-            return;
+        try {
+            for ($i = 0; $i < self::COLD_REVS; $i++) {
+                $file = tempnam(sys_get_temp_dir(), 'tempest-reflection-');
+
+                if ($file === false) {
+                    throw new RuntimeException('Could not create a cold benchmark source file.');
+                }
+
+                $this->coldFiles[] = $file;
+                $namespace = $run . '\\Case' . $i;
+
+                if (file_put_contents($file, $this->buildColdSource($namespace, $params['extraProperties'])) === false) {
+                    throw new RuntimeException('Could not write a cold benchmark source file.');
+                }
+
+                require $file;
+                $this->coldReflectors[] = PropertyReflector::fromParts($namespace . '\\BooksHolder', 'books');
+            }
+
+            if ($params['sourceCached']) {
+                foreach ($this->coldReflectors as $reflector) {
+                    Assert::assertSame(Book::class, $reflector->getClass()->getProperty('warmupBooks')->getIterableType()?->getName());
+                }
+            }
+        } catch (Throwable $exception) {
+            $this->removeColdFiles();
+            throw $exception;
         }
-
-        ColdParseStreamWrapper::setContent($file, $this->buildColdSource($index));
-        require_once $file;
     }
 
     public function tearDownCold(): void
     {
-        $this->coldFiles = [];
+        try {
+            Assert::assertSame(self::COLD_REVS, $this->coldIndex, 'First-lookup subjects require exactly 20 revolutions and no warmup.');
+
+            foreach ($this->coldReflectors as $reflector) {
+                Assert::assertSame(Book::class, $reflector->getIterableType()?->getName());
+            }
+        } finally {
+            $this->removeColdFiles();
+        }
     }
 
-    private function buildColdSource(int $index): string
+    private function removeColdFiles(): void
+    {
+        foreach ($this->coldFiles as $file) {
+            unlink($file);
+        }
+
+        $this->coldFiles = [];
+        $this->coldReflectors = [];
+        $this->coldIndex = 0;
+    }
+
+    private function buildColdSource(string $namespace, int $extraProperties): string
     {
         $bookClass = Book::class;
+        $properties = '';
+
+        for ($i = 0; $i < $extraProperties; $i++) {
+            $properties .= "    public string \$field{$i};\n";
+        }
 
         return <<<PHP
         <?php
 
         declare(strict_types=1);
 
-        namespace TempestParseBench{$index};
+        namespace {$namespace};
 
         use {$bookClass};
 
         final class BooksHolder
         {
             /** @var Book[] */
+            public array \$warmupBooks;
+
+            /** @var Book[] */
             public array \$books;
+        {$properties}
         }
         PHP;
-    }
-
-    /**
-     * @return PropertyReflector[]
-     */
-    private function collectReflectors(string $class): array
-    {
-        $reflectors = [];
-
-        foreach (new ReflectionClass($class)->getProperties() as $property) {
-            $reflectors[] = new PropertyReflector($property);
-        }
-
-        return $reflectors;
     }
 }

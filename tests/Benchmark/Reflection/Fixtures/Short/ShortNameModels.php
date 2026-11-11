@@ -10,10 +10,4 @@ final class ShortNameModels
 {
     /** @var Book[] */
     public array $one;
-
-    /** @var Book[] */
-    public array $two;
-
-    /** @var Book[] */
-    public array $three;
 }

@@ -6,11 +6,11 @@ namespace Tests\Tempest\Benchmark\Reflection\Fixtures\Plain;
 
 final class PlainModels
 {
-    public array $one;
+    public array $noDocblock;
 
     /** @var int[] */
-    public array $two;
+    public array $integers;
 
     /** @var list<string> */
-    public array $three;
+    public array $strings;
 }
