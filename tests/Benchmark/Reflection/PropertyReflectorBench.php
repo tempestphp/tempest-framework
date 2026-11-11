@@ -80,15 +80,17 @@ final class PropertyReflectorBench
         $this->coldReflectors[$this->coldIndex++]->getIterableType();
     }
 
-    /** @return Generator<string, array{extraProperties: int, sourceCached: bool}> */
+    /** @return Generator<string, array{extraProperties: int, sourceCached: bool, groupedImport: bool, propertiesPerFile: int}> */
     public function firstLookupSources(): Generator
     {
-        yield 'cold-small' => ['extraProperties' => 0, 'sourceCached' => false];
-        yield 'cold-100-properties' => ['extraProperties' => 100, 'sourceCached' => false];
-        yield 'cached-source' => ['extraProperties' => 0, 'sourceCached' => true];
+        yield 'cold-small' => ['extraProperties' => 0, 'sourceCached' => false, 'groupedImport' => false, 'propertiesPerFile' => 1];
+        yield 'cold-100-properties' => ['extraProperties' => 100, 'sourceCached' => false, 'groupedImport' => false, 'propertiesPerFile' => 1];
+        yield 'cached-source' => ['extraProperties' => 0, 'sourceCached' => true, 'groupedImport' => false, 'propertiesPerFile' => 1];
+        yield 'cold-grouped-import' => ['extraProperties' => 0, 'sourceCached' => false, 'groupedImport' => true, 'propertiesPerFile' => 1];
+        yield 'cold-20-properties-one-file' => ['extraProperties' => 0, 'sourceCached' => false, 'groupedImport' => false, 'propertiesPerFile' => self::COLD_REVS];
     }
 
-    /** @param array{extraProperties: int, sourceCached: bool} $params */
+    /** @param array{extraProperties: int, sourceCached: bool, groupedImport: bool, propertiesPerFile: int} $params */
     public function setUpFirstLookup(array $params): void
     {
         // Load resolver dependencies without touching any of the measured source files.
@@ -96,7 +98,7 @@ final class PropertyReflectorBench
         $run = 'TempestParseBench' . bin2hex(random_bytes(8));
 
         try {
-            for ($i = 0; $i < self::COLD_REVS; $i++) {
+            for ($i = 0; $i < self::COLD_REVS; $i += $params['propertiesPerFile']) {
                 $file = tempnam(sys_get_temp_dir(), 'tempest-reflection-');
 
                 if ($file === false) {
@@ -106,12 +108,15 @@ final class PropertyReflectorBench
                 $this->coldFiles[] = $file;
                 $namespace = $run . '\\Case' . $i;
 
-                if (file_put_contents($file, $this->buildColdSource($namespace, $params['extraProperties'])) === false) {
+                if (file_put_contents($file, $this->buildColdSource($namespace, $params['extraProperties'], $params['groupedImport'], $params['propertiesPerFile'])) === false) {
                     throw new RuntimeException('Could not write a cold benchmark source file.');
                 }
 
                 require $file;
-                $this->coldReflectors[] = PropertyReflector::fromParts($namespace . '\\BooksHolder', 'books');
+
+                for ($property = 0; $property < $params['propertiesPerFile']; $property++) {
+                    $this->coldReflectors[] = PropertyReflector::fromParts($namespace . '\\BooksHolder', $property === 0 ? 'books' : 'books' . $property);
+                }
             }
 
             if ($params['sourceCached']) {
@@ -149,13 +154,19 @@ final class PropertyReflectorBench
         $this->coldIndex = 0;
     }
 
-    private function buildColdSource(string $namespace, int $extraProperties): string
+    private function buildColdSource(string $namespace, int $extraProperties, bool $groupedImport, int $propertiesPerFile): string
     {
         $bookClass = Book::class;
+        $bookNamespace = substr($bookClass, 0, strrpos($bookClass, '\\'));
+        $import = $groupedImport ? "use {$bookNamespace}\\{Book};" : "use {$bookClass};";
         $properties = '';
 
         for ($i = 0; $i < $extraProperties; $i++) {
             $properties .= "    public string \$field{$i};\n";
+        }
+
+        for ($i = 1; $i < $propertiesPerFile; $i++) {
+            $properties .= "    /** @var Book[] */\n    public array \$books{$i};\n";
         }
 
         return <<<PHP
@@ -165,7 +176,7 @@ final class PropertyReflectorBench
 
         namespace {$namespace};
 
-        use {$bookClass};
+        {$import}
 
         final class BooksHolder
         {
