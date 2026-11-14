@@ -24,7 +24,12 @@ final class FieldStatementTest extends TestCase
 
         $this->assertSame(
             'COUNT(*) AS `count`',
-            new FieldStatement('COUNT(*) AS count')->compile(DatabaseDialect::MYSQL),
+            new FieldStatement('COUNT(*) AS count')->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            'COUNT(item.id) AS `count`',
+            new FieldStatement('COUNT(item.id) AS count')->compile(DatabaseDialect::SQLITE),
         );
     }
 
@@ -45,6 +50,11 @@ final class FieldStatementTest extends TestCase
             'COUNT(*) AS `count`',
             new FieldStatement('COUNT(*) AS count')->compile(DatabaseDialect::MYSQL),
         );
+
+        $this->assertSame(
+            'COUNT(item.id) AS `count`',
+            new FieldStatement('COUNT(item.id) AS count')->compile(DatabaseDialect::MYSQL),
+        );
     }
 
     #[Test]
@@ -58,6 +68,11 @@ final class FieldStatementTest extends TestCase
         $this->assertSame(
             '"table"."field"',
             new FieldStatement('table.field')->compile(DatabaseDialect::POSTGRESQL),
+        );
+
+        $this->assertSame(
+            'COUNT(item.id) AS "count"',
+            new FieldStatement('COUNT(item.id) AS count')->compile(DatabaseDialect::POSTGRESQL),
         );
     }
 

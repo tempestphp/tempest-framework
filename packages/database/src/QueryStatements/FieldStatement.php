@@ -37,22 +37,20 @@ final class FieldStatement implements QueryStatement
             $alias = trim($parts[1], '`" ');
         }
 
-        $field = arr(explode('.', $field))
-            ->map(fn (string $part) => trim($part, '`" '))
-            ->map(
-                function (string $part) use ($dialect) {
-                    if (str_contains($part, '(')) {
-                        return $part;
-                    }
+        if (! str_contains($field, '(')) {
+            $field = arr(explode('.', $field))
+                ->map(fn (string $part) => trim($part, '`" '))
+                ->map(
+                    function (string $part) use ($dialect) {
+                        if ($dialect === DatabaseDialect::SQLITE) {
+                            return $part;
+                        }
 
-                    if ($dialect === DatabaseDialect::SQLITE) {
-                        return $part;
-                    }
-
-                    return $dialect->quoteIdentifier($part);
-                },
-            )
-            ->implode('.');
+                        return $dialect->quoteIdentifier($part);
+                    },
+                )
+                ->implode('.');
+        }
 
         if ($alias === null) {
             return $field;
