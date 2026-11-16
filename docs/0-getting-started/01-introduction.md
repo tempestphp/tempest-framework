@@ -61,6 +61,8 @@ final readonly class BookController
 
 And a lot more.
 
+Tempest embraces the latest PHP features and only supports the latest stable major version of the framework. We don't offer long-term support (LTS) releases, but provide Rector suites to make upgrading between major versions easier. Learn more about our [versioning and support policy](../5-extra-topics/01-versions-and-support.md) .
+
 ### Getting out of your way
 
 A core part of Tempest's philosophy is that it wants to "get out of your way" as best as possible. For starters, Tempest is designed to structure your project code however you want, without making any assumptions or forcing conventions on you. You can prefer a classic MVC application, DDD or hexagonal design, microservices, or something else; Tempest works with any project structure out of the box without any configuration.
